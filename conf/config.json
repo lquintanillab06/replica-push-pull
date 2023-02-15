@@ -1,0 +1,14 @@
+{
+    "local_datasource": {
+        "host": "10.10.1.225",
+        "user": "root",
+        "passwd": "sys",
+        "database": "rescue"
+    },
+    "remote_datasource": {
+        "host": "10.10.1.225",
+        "user": "root",
+        "passwd": "sys",
+        "database": "rescue"
+    }
+}
