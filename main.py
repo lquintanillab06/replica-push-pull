@@ -3,8 +3,9 @@ from src.operations.replica_inventarios import replica_inventario
 from src.operations.replica_movimiento_almacen import replica_movimiento_almacen,replica_sucursal_pull_movimiento_almacen
 from src.operations.replica_cliente_credito import replica_push_cliente_credito
 from src.operations.replica_proveedor import replica_pull_proveedor
-
 from src.test.multiprocess_replica import replica_mp_movimiento_almacen
+from src.jobs.replica_push import start_push
+from src.jobs.replica_pull import start_pull
 
 def main():
     print("Cargando App ...")
@@ -16,7 +17,9 @@ def replica_test():
     #replica_mp_movimiento_almacen()
     #replica_sucursal_pull_movimiento_almacen()
     #replica_movimiento_almacen('PULL')
-    replica_pull_proveedor()
+    #replica_pull_proveedor()
+    start_push()
+    start_pull()
 
     pass
     

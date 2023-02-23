@@ -1,12 +1,14 @@
 from src.services import get_audits, get_maestro_detalle, pull_entity, push_entity,actualizar_audit,crear_audit,get_replica_entity
 from src.database import get_local_pool_connection,get_remote_pool_connection
-
+import datetime
 
 
 def replica_pull_vales():
+    print("Replica pull de Vales ...",datetime.datetime.now())
     replica_vales('PULL')
 
 def replica_push_vales():
+    print("Replica push de vales ...",datetime.datetime.now())
     replica_vales('PUSH')
 
 def replica_vales(action):
@@ -44,9 +46,9 @@ def replica_vales(action):
                 crear_audit(remoteDB,'OFICINAS', audit)
                 crear_audit(remoteDB,atiende['nombre'], audit)
                 crear_audit(remoteDB,solicita['nombre'], audit)
-                actualizar_audit(localDB,'audit_log',audit['id'])
+                actualizar_audit(localDB,'audit_log',audit['id'],'Replicado')
             if error:
-                actualizar_audit(localDB,'audit_log',audit['id'])
+                actualizar_audit(localDB,'audit_log',audit['id'],'Error')
 
 def get_sol(localDB,remoteDB,action,id):
     query_sol = f"select * from solicitud_de_traslado where id = '{id}' " 

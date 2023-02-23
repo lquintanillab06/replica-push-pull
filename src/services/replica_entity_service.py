@@ -43,6 +43,7 @@ def push_entity(local,remote,entity_name,entity_id,action):
         row = get_entity(local.database,local_cursor,entity_name,entity_id)
     except Exception as e:
         print(e)
+        local_cnx.close()
         return False, True
 
     try:
@@ -57,6 +58,7 @@ def push_entity(local,remote,entity_name,entity_id,action):
         remote_cursor = remote_cnx.cursor(dictionary=True, buffered=True)
     except Exception as e:
         print(e)
+        remote_cnx.close()
         return False, True
     
     if row or action == 'DELETE':

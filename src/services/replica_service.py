@@ -18,6 +18,7 @@ def replica_audit(table, action,audit_table, dispersar=False):
 
     audits = get_audits(localDB,remoteDB,audit_table,action,table)
     for audit in audits:
+        print(audit)
         if action == 'PULL':
             replicado, error = pull_entity(localDB,remoteDB,audit['table_name'],audit['persisted_object_id'],audit['event_name'])
             if replicado:
@@ -27,17 +28,23 @@ def replica_audit(table, action,audit_table, dispersar=False):
         if action == 'PUSH':
             replicado, error = push_entity(localDB,remoteDB,audit['table_name'],audit['persisted_object_id'],audit['event_name'])
             if replicado:
+                print("REPLICADO")
+                print(f"Dispersar: {dispersar}")
+                sucursales = []
                 if dispersar:
                     sucursales = get_sucursales_replica(localDB) 
                 if sucursales:
                     for sucursal in sucursales:
+                        print("**********************************************")
+                        print(sucursal)
+                        print("**********************************************")
                         crear_audit(remoteDB,sucursal['server'], audit)
                 else:
                     target = audit['target']
                     if target == 'CENTRAL':
                         target = 'OFICINAS'
                     crear_audit(remoteDB,target, audit)
-                actualizar_audit(localDB,audit_table,audit['id'],'Replicado')
+                actualizar_audit(localDB,audit_table,audit['id'],'Replicado_cloud')
             if error:
                 actualizar_audit(remoteDB,audit_table,audit['id'],'Error')
                
@@ -50,7 +57,7 @@ def get_audits(localDB,remoteDB,audit_table,action,table):
         except Exception as e:
             print(e)
         try:
-            query_audit = f"select * from {audit_table} where table_name = '{table}' and date_replicated is null order by date_created"
+            query_audit = f"select * from {audit_table} where table_name = '{table}' and replicated_cloud is null and date_created >= '2023/02/21' and event_name  = 'INSERT'  order by date_created"
             local_cursor.execute(query_audit)
             audits = local_cursor.fetchall()
             local_cnx.close()
@@ -72,7 +79,7 @@ def get_audits(localDB,remoteDB,audit_table,action,table):
 
         try:
             
-            query_audit = f"select * from audit_log where table_name = '{table}' and target = '{sucursal_local['nombre']}' and date_replicated is null order by date_created"        
+            query_audit = f"select * from audit_log where table_name = '{table}' and target = '{sucursal_local['nombre']}' and replicated_cloud is null and date_created >= '2023/02/21' order by date_created"        
             remote_cursor.execute(query_audit)
             audits = remote_cursor.fetchall()
             remote_cnx.close()
@@ -159,7 +166,7 @@ def actualizar_audit(connectionDB,audit_table,audit_id,message):
         print(e)
 
     try:
-        sql_update =f"update {audit_table} set date_replicated = %(replicado)s, message = %(message)s where id = %(audit_id)s "
+        sql_update =f"update {audit_table} set replicated_cloud = %(replicado)s, message = %(message)s where id = %(audit_id)s "
         cursor.execute(sql_update,{"replicado":datetime.now(), "message" : message,"audit_id":audit_id})
         cnx.commit()
         cnx.close()
