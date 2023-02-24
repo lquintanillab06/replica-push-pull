@@ -2,6 +2,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from src.operations.replica_existencia import replica_push_existencia
 from src.operations.replica_cliente import replica_push_cliente
 from src.operations.replica_vales import replica_push_vales
+from src.operations.replica_cliente_credito import replica_push_cliente_credito
 
 
 
@@ -12,4 +13,5 @@ def start_push():
     scheduler.add_job(replica_push_existencia, 'interval', minutes=3, id='push_existencia_id')
     scheduler.add_job(replica_push_cliente, 'interval', minutes=2, id='push_cliente_id')
     scheduler.add_job(replica_push_vales, 'interval', minutes=2, id='push_vales_id')
+    scheduler.add_job(replica_push_cliente_credito, 'interval', minutes=2, id='push_cliente_credito_id')
     scheduler.start() 

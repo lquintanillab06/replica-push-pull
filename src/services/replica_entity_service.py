@@ -9,6 +9,7 @@ def get_entity(database_name,cursor,table,entity_id):
     row = cursor.fetchone()
     return row
 
+
 def insert_entity(database_name,cursor,table,row):
     insert_query = resolver_insert_query(database_name,cursor,table)
     cursor.execute(insert_query,row)
@@ -139,12 +140,30 @@ def get_replica_entity(conectionDB, table, entity_id):
         cnx = conectionDB.get_conexion()
         cursor = cnx.cursor(dictionary=True, buffered=True)
         entity = get_entity(conectionDB.database,cursor,table,entity_id)
-        cnx.commit()
         cnx.close()
         return entity
     except Exception as e:
         print(e)
         return None
+    
+def get_replica_entity_by_field(conectionDB, table, field, field_id):
+
+    query_entity = f"select * from {table} where {field} = %(id)s "
+    try:
+        cnx = conectionDB.get_conexion()
+        cursor = cnx.cursor(dictionary=True, buffered=True)
+        cursor.execute(query_entity,{'id':field_id})
+        row = cursor.fetchone()
+        cnx.close()
+        return row
+    except Exception as e:
+        print(e)
+        return None
+   
+
+   
+
+   
 
 def insert_replica_entity(conectionDB, table, entity):
     try:

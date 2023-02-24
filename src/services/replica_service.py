@@ -128,10 +128,10 @@ def get_sucursal_local(localDB):
         return None
 
 
-def crear_audit(remoteDB,sucursal_name, audit_origen):
+def crear_audit(connectionDB,sucursal_name, audit_origen):
     try:
-        remote_cnx =  remoteDB.get_conexion()
-        remote_cursor = remote_cnx.cursor(dictionary=True, buffered=True)
+        cnx =  connectionDB.get_conexion()
+        cursor = cnx.cursor(dictionary=True, buffered=True)
         audit = {
                     'version': audit_origen['version'],
                     'persisted_object_id': audit_origen['persisted_object_id'],
@@ -150,12 +150,12 @@ def crear_audit(remoteDB,sucursal_name, audit_origen):
                             (%(version)s,%(persisted_object_id)s,%(target)s,%(date_created)s,%(last_updated)s,%(name)s,%(event_name)s,%(table_name)s,%(source)s)
                             """
         
-        remote_cursor.execute(sql_insert_audit,audit)
-        remote_cnx.commit()
-        remote_cnx.close()
+        cursor.execute(sql_insert_audit,audit)
+        cnx.commit()
+        cnx.close()
     except Exception as e:
         print(e)
-        remote_cnx.close()
+        cnx.close()
 
 def actualizar_audit(connectionDB,audit_table,audit_id,message):
 

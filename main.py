@@ -1,26 +1,17 @@
-
-from src.operations.replica_inventarios import replica_inventario
-from src.operations.replica_movimiento_almacen import replica_movimiento_almacen,replica_sucursal_pull_movimiento_almacen
-from src.operations.replica_cliente_credito import replica_push_cliente_credito
-from src.operations.replica_proveedor import replica_pull_proveedor
-from src.test.multiprocess_replica import replica_mp_movimiento_almacen
 from src.jobs.replica_push import start_push
 from src.jobs.replica_pull import start_pull
+
+from src.operations.replica_cxc import replica_push_cxc_con, replica_pull_cxc_con
 
 def main():
     print("Cargando App ...")
 
 def replica_test():
-    #replica_inventario('PUSH')
-    #replica_movimiento_almacen('PUSH')
-    #replica_push_cliente_credito()
-    #replica_mp_movimiento_almacen()
-    #replica_sucursal_pull_movimiento_almacen()
-    #replica_movimiento_almacen('PULL')
-    #replica_pull_proveedor()
-    start_push()
-    start_pull()
-
+    #start_push()
+    #start_pull()
+    #replica_pull_cxc_con()
+    print("Replica PUSH CXC ...")
+    replica_push_cxc_con()
     pass
     
     

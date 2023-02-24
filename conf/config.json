@@ -6,9 +6,9 @@
         "database": "siipapx"
     },
     "remote_datasource": {
-        "host": "157.245.248.200",
-        "user": "sistemas3",
-        "passwd": "papasr98",
-        "database": "replica"
+        "host": "10.10.1.225",
+        "user": "root",
+        "passwd": "sys",
+        "database": "rescue"
     }
 }
