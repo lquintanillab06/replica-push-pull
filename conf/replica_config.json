@@ -1,6 +1,0 @@
-{
-    "catalogos": ["cliente"],
-    "operaciones": {
-        "cuenta_por_cobrar": []
-    }
-}
