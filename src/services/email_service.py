@@ -2,8 +2,8 @@ from mailjet_rest import Client
 from src.database import get_database_connections_pool
 from src.services import get_entities
 
-api_key = "1d98821252f0e19ba4d9a6f678a8f129"
-api_secret ="4b7f29ef7df2f51dc497f3490a008cd3"
+api_key = ""
+api_secret =""
 mailjet = Client(auth=(api_key, api_secret))
 
 
