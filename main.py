@@ -13,6 +13,7 @@ from src.operations.replica_requisicion_material import replica_requisicion_de_m
 from src.operations.replica_compras import replica_push_compras, replica_pull_compras
 from src.operations.replica_recepcion_compra import replica_push_recepcion_compra, replica_pull_recepcion_compra
 from src.operations.replica_devolucion_compra import replica_pull_devolucion_compra,replica_push_devolucion_compra
+from src.operations.replica_traslados import replica_push_traslados, replica_pull_traslados
 
 from src.database import get_local_pool_connection,get_remote_pool_connection
 
@@ -49,9 +50,12 @@ def replica_test():
     #replica_push_recepcion_compra()
     #replica_pull_recepcion_compra()
     #replica_pull_devolucion_compra()
-    envio_masivo_db()
+    #envio_masivo_db()
     #enviar_email('jass@papelsa.com.mx')
     #envio_masivo_db()
+    #replica_push_traslados()
+    replica_pull_traslados()
+
 
     pass
     
