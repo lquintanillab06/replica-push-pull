@@ -1,0 +1,14 @@
+{
+    "local_datasource": {
+        "host": "10.10.1.101",
+        "user": "root",
+        "passwd": "sys",
+        "database": "siipapx"
+    },
+    "remote_datasource": {
+        "host": "157.245.248.200",
+        "user": "sistemas3",
+        "passwd": "papasr98",
+        "database": "replica"
+    }
+}

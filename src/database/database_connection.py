@@ -40,6 +40,19 @@ def get_persisted_remote_connection():
         _remote_connection = DataBaseConnection("remote_datasource")
     return _remote_connection  
 
+def get_database_connections_pool():
+    
+    try:
+        localDB = get_local_pool_connection()
+    except Exception as e:
+        print(e)
+    try:
+        remoteDB = get_remote_pool_connection()
+    except Exception as e:
+        print(e)
+
+    return localDB,remoteDB
+
 class DataBaseConnection():
 
     def __init__(self, datasource) :

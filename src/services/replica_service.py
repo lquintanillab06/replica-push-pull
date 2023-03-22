@@ -67,7 +67,7 @@ def get_audits(localDB,remoteDB,audit_table,action,table):
     if action == 'PULL':
 
         try:
-            sucursal_local = get_sucursal_local(localDB)
+            sucursal_local = get_sucursal_local()
         except Exception as e:
             print(e)
 
@@ -110,8 +110,9 @@ def get_sucursales_replica(localDB):
 
     return sucursales 
 
-def get_sucursal_local(localDB):
+def get_sucursal_local():   
     try:
+        localDB = get_local_pool_connection()
         local_cnx = localDB.get_conexion()
         cursor = local_cnx.cursor(dictionary=True, buffered=True)
         sql_config_local ="select * from app_config"
@@ -156,6 +157,24 @@ def crear_audit(connectionDB,sucursal_name, audit_origen):
     except Exception as e:
         print(e)
         cnx.close()
+
+def crear_audit_operacion(connectionDB,audit):
+    try:
+        cnx =  connectionDB.get_conexion()
+        cursor = cnx.cursor(dictionary=True, buffered=True)
+        sql_insert_audit = """
+                            insert into audit_log 
+                            (version,persisted_object_id,target,date_created,last_updated,name,event_name,table_name,source)
+                            values
+                            (%(version)s,%(persisted_object_id)s,%(target)s,%(date_created)s,%(last_updated)s,%(name)s,%(event_name)s,%(table_name)s,%(source)s)
+                            """   
+        cursor.execute(sql_insert_audit,audit)
+        cnx.commit()
+        cnx.close()
+    except Exception as e:
+        print(e)
+        cnx.close()
+
 
 def actualizar_audit(connectionDB,audit_table,audit_id,message):
 
@@ -253,16 +272,21 @@ def get_last_run_replica_log(remoteDB,fecha,entity,sucursal,action):
         remote_cursor = remote_cnx.cursor(dictionary=True, buffered=True)
     except Exception as e:
         print(e)
-    query = f"select max(fecha_control) as lastRun from replica_log where date(date_created) = '{fecha.date()}' and entity= '{entity}' and sucursal = '{sucursal}' and action = '{action}'"
+    query = f"select max(fecha_control) as last_run from replica_log where date(date_created) = '{fecha.date()}' and entity= '{entity}' and sucursal = '{sucursal}' and action = '{action}'"
 
     remote_cursor.execute(query)
     last_replica_log = remote_cursor.fetchone()
     remote_cnx.close()
-    if not last_replica_log['lastRun']:
+    if not last_replica_log['last_run']:
         return fecha
 
-    return last_replica_log['lastRun']
+    return last_replica_log['last_run']
 
-
-
+def obtener_diferencias(lista_a, lista_b):
+    diferencias = []
+    if len(lista_b) != 0:
+        diferencias = [i for i in lista_a if i not in lista_b]
+    else:
+        diferencias = lista_a
+    return diferencias
 

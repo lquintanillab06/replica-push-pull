@@ -2,7 +2,6 @@ import datetime
 from src.services import (get_maestro_detalle,get_replica_entity,get_entities,get_last_run_replica_log,get_sucursal_local,insert_or_update_entity,create_replica_log,
                             get_sucursales_replica)
 from src.database import get_local_pool_connection,get_remote_pool_connection
-from multiprocessing import Process
 
 
 
@@ -12,7 +11,7 @@ def replica_movimiento_almacen(action):
         localDB = get_local_pool_connection()
     except Exception as e:
         print(e)  
-    sucursal = get_sucursal_local(localDB)
+    sucursal = get_sucursal_local()
     replica_movimiento_almacen_sucursal(action,sucursal)
 
 

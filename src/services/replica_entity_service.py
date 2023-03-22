@@ -124,7 +124,8 @@ def pull_entity(local,remote,entity_name,entity_id,action):
                 local_cnx.commit()
             if action == 'DELETE':
                 print("Realizando el pull-delete")
-                delete_entity(local.database,local_cursor,entity_name,entity_id)
+                #delete_entity(local.database,local_cursor,entity_name,entity_id)
+                delete_entity(local, entity_name,entity_id)
                 local_cnx.commit()
             local_cnx.close()
             remote_cnx.close()
@@ -159,17 +160,13 @@ def get_replica_entity_by_field(conectionDB, table, field, field_id):
     except Exception as e:
         print(e)
         return None
-   
-
-   
-
-   
-
+  
 def insert_replica_entity(conectionDB, table, entity):
     try:
         cnx = conectionDB.get_conexion()
         cursor = cnx.cursor(dictionary=True, buffered=True)
     except Exception as e:
+        pass
         print(e)
 
     try:
@@ -179,7 +176,7 @@ def insert_replica_entity(conectionDB, table, entity):
         return True, None
 
     except IntegrityError as e:
-        print(e)
+        #print(e)
         cnx.close()
         return False, e.errno
     except Exception as e:
