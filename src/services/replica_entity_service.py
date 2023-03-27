@@ -84,6 +84,8 @@ def push_entity(local,remote,entity_name,entity_id,action):
             local_cnx.close()
             remote_cnx.close()
             return False, True 
+    
+    return False, True 
 
    
 
@@ -176,7 +178,7 @@ def insert_replica_entity(conectionDB, table, entity):
         return True, None
 
     except IntegrityError as e:
-        #print(e)
+        print(e)
         cnx.close()
         return False, e.errno
     except Exception as e:

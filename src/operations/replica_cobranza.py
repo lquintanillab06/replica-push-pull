@@ -92,30 +92,27 @@ def replica_cobranza(origenDB,destinoDB, action):
 
 
 def get_cobro_tipo(connectionDB,cobro):
-
-    #print(f"Forma de pago : {cobro['forma_de_pago']}")
+    
+    print(f"Forma de pago : {cobro['forma_de_pago']}")
 
     if cobro['forma_de_pago'] == 'CHEQUE':
-        cobro_tipo = get_replica_entity(connectionDB,'cobro_cheque',cobro['id'])
+        print("Cobro con cheque")
+        cobro_tipo = get_replica_entity_by_field(connectionDB,'cobro_cheque','cobro_id',cobro['id'])
+        print("+"*60)
+        print(cobro_tipo)
+        print("+"*60)
         return cobro_tipo,'cobro_cheque'
 
     if cobro['forma_de_pago'].startswith('DEPOSITO') :
-        cobro_tipo = get_replica_entity(connectionDB,'cobro_deposito',cobro['id'])
+        cobro_tipo = get_replica_entity_by_field(connectionDB,'cobro_deposito','cobro_id',cobro['id'])
         return cobro_tipo,'cobro_deposito'
     
     if cobro['forma_de_pago'].startswith('TRANSFERENCIA') :
-        cobro_tipo = get_replica_entity(connectionDB,'cobro_transferencia',cobro['id'])
+        cobro_tipo = get_replica_entity_by_field(connectionDB,'cobro_transferencia','cobro_id',cobro['id'])
         return cobro_tipo,'cobro_transferencia'
     
     if cobro['forma_de_pago'].startswith('TARJETA') :
-        cobro_tipo = get_replica_entity(connectionDB,'cobro_tarjeta',cobro['id'])
+        cobro_tipo = get_replica_entity_by_field(connectionDB,'cobro_tarjeta','cobro_id',cobro['id'])
         return cobro_tipo,'cobro_tarjeta'
     
     return None, None
-    
- 
-    
-    
-        
- 
-
