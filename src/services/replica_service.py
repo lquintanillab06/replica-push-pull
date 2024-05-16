@@ -48,7 +48,7 @@ def replica_audit(table, action,audit_table, dispersar=False):
             if error:
                 actualizar_audit(remoteDB,audit_table,audit['id'],'Error')
                
-def get_audits(localDB,remoteDB,audit_table,action,table): 
+def get_audits(localDB,remoteDB,audit_table,action,table, last_run): 
     audits = []
     if action == 'PUSH':
         try:
@@ -57,7 +57,7 @@ def get_audits(localDB,remoteDB,audit_table,action,table):
         except Exception as e:
             print(e)
         try:
-            query_audit = f"select * from {audit_table} where table_name = '{table}' and replicated_cloud is null and date_created >= '2023/02/21' and event_name  = 'INSERT'  order by date_created"
+            query_audit = f"select * from {audit_table} where table_name = '{table}' and replicated_cloud is null and date_created >= '{last_run}' and event_name  = 'INSERT'  order by date_created"
             local_cursor.execute(query_audit)
             audits = local_cursor.fetchall()
             local_cnx.close()

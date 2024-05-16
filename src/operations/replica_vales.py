@@ -1,7 +1,12 @@
-from src.services import get_audits, get_maestro_detalle, pull_entity, push_entity,actualizar_audit,crear_audit,get_replica_entity
+from src.services import (get_audits, get_maestro_detalle, pull_entity, push_entity,actualizar_audit,crear_audit,get_replica_entity,
+                          get_sucursal_local,get_last_run_replica_log, create_replica_log)
 from src.database import get_local_pool_connection,get_remote_pool_connection
 import datetime
 
+try:
+    remoteDB = get_remote_pool_connection()
+except Exception as e:
+    print(e)
 
 def replica_pull_vales():
     print("Replica pull de Vales ...",datetime.datetime.now())
@@ -9,9 +14,17 @@ def replica_pull_vales():
 
 def replica_push_vales():
     print("Replica push de vales ...",datetime.datetime.now())
-    replica_vales('PUSH')
+    try:
+        remoteDB = get_remote_pool_connection()
+    except Exception as e:
+        print(e)
+    replica_vales('PUSH', remoteDB)
 
-def replica_vales(action):
+def replica_vales(action, remoteDB):
+    fecha = datetime.datetime.today()
+    table = 'solicitud_de_traslado'
+    sucursal = get_sucursal_local()
+    last_run = get_last_run_replica_log(remoteDB,fecha,table,sucursal['nombre'],action) 
     try:
         localDB = get_local_pool_connection()
     except Exception as e:
@@ -22,7 +35,8 @@ def replica_vales(action):
     except Exception as e:
         print(e)
         
-    audits = get_audits(localDB, remoteDB,'audit_log' ,action,'solicitud_de_traslado')
+    audits = get_audits(localDB, remoteDB,'audit_log' ,action,'solicitud_de_traslado', last_run)
+    print(audits)
     for audit in audits:
         sol, partidas = get_sol(localDB,remoteDB,action,audit['persisted_object_id'])
         if action == 'PULL':
@@ -45,10 +59,13 @@ def replica_vales(action):
                 solicita = get_replica_entity(localDB,'sucursal',sol['sucursal_solicita_id'])
                 crear_audit(remoteDB,'OFICINAS', audit)
                 crear_audit(remoteDB,atiende['nombre'], audit)
-                crear_audit(remoteDB,solicita['nombre'], audit)
+                # crear_audit(remoteDB,solicita['nombre'], audit)
                 actualizar_audit(localDB,'audit_log',audit['id'],'Replicado')
             if error:
                 actualizar_audit(localDB,'audit_log',audit['id'],'Error')
+
+
+    create_replica_log(remoteDB,action,sucursal['nombre'],table)
 
 def get_sol(localDB,remoteDB,action,id):
     query_sol = f"select * from solicitud_de_traslado where id = '{id}' " 

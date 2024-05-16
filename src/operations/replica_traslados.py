@@ -22,6 +22,10 @@ def replica_push_traslados():
             query_traslado_det = f"select * from traslado_det where traslado_id = '{traslado.get('id')}' "
             traslados_det = get_entities(localDB,query_traslado_det)
             for det in traslados_det:
+                if det["inventario_id"]:
+                    inventario = get_replica_entity(localDB,'inventario',det['inventario_id'])
+                    if inventario:
+                        insert_or_update_entity(remoteDB, 'inventario', inventario)
                 print(f"TrasladoDet: {det['id']}")
                 insert_or_update_entity(remoteDB, 'traslado_det', det)
             sucursal_traslado = get_replica_entity(localDB,'sucursal',traslado['sucursal_id'])

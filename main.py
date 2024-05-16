@@ -12,7 +12,7 @@ def main():
 
 def replica_run():
     print("Arrancando la Replica!!!")
-    start_pull()
+    # start_pull()
     start_push()
     pass
     
