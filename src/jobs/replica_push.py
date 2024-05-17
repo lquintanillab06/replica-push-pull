@@ -16,7 +16,8 @@ def start_push():
     # scheduler.add_job(replica_push_cxc_con,  'cron', day_of_week= 'mon-sat', hour= '9-19',minute='*/10', id='push_cxc_con_id')
     # scheduler.add_job(replica_push_cxc_cre, 'cron',day_of_week= 'mon-sat', hour= '9-19',minute='11', id='push_cxc_cre_id')
     # scheduler.add_job(replica_push_cxc_cod, 'cron',day_of_week= 'mon-sat', hour= '9-19',minute='11', id='push_cxc_cod_id')
-    scheduler.add_job(replica_push_vales,  'cron', day_of_week= 'mon-sat', hour= '9-19',minute='*/10', id='push_vales_id')
+    scheduler.add_job(replica_push_vales,  'cron', day_of_week= 'mon-sat', hour= '9-19',minute='*/7', id='push_vales_id')
+    scheduler.add_job(replica_push_traslados,  'cron', day_of_week= 'mon-sat', hour= '9-19',minute='*/2', id='push_traslado_id')
     
     # scheduler.add_job(replica_audit_push_inventario,  'cron', day_of_week= 'mon-sat', hour= '9-19',minute='*/3', id='push_inv_id')
 

@@ -57,7 +57,7 @@ def get_audits(localDB,remoteDB,audit_table,action,table, last_run):
         except Exception as e:
             print(e)
         try:
-            query_audit = f"select * from {audit_table} where table_name = '{table}' and replicated_cloud is null and date_created >= '{last_run}' and event_name  = 'INSERT'  order by date_created"
+            query_audit = f"select * from {audit_table} where table_name = '{table}' and replicated_cloud is null and date_created >= '{last_run}'  order by date_created"
             local_cursor.execute(query_audit)
             audits = local_cursor.fetchall()
             local_cnx.close()

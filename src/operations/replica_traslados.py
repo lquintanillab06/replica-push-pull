@@ -1,5 +1,7 @@
-from src.services import get_audits,get_sucursal_local,get_replica_entity, get_entities,insert_or_update_entity, crear_audit,actualizar_audit
+from src.services import (get_audits,get_sucursal_local,get_replica_entity, get_entities,insert_or_update_entity, crear_audit,actualizar_audit,
+                        get_last_run_replica_log, create_replica_log)
 from src.database import get_database_connections_pool
+import datetime
 
 
 def replica_push_traslados():
@@ -7,7 +9,11 @@ def replica_push_traslados():
     localDB, remoteDB = get_database_connections_pool()
     sucursal = get_sucursal_local()
     action = 'PUSH'
-    audits = get_audits(localDB, remoteDB,'audit_log' ,action,'traslado')
+    fecha = datetime.datetime.today()
+    table = 'traslado'
+    sucursal = get_sucursal_local()
+    last_run = get_last_run_replica_log(remoteDB,fecha,table,sucursal['nombre'],action) 
+    audits = get_audits(localDB, remoteDB,'audit_log' ,action,'traslado', last_run)
     print(len(audits))
     for audit in audits:
         #print(audit)
@@ -37,7 +43,9 @@ def replica_push_traslados():
             actualizar_audit(localDB,'audit_log',audit['id'],'Replicado')
         elif not traslado  and audit['event_name'] == 'DELETE':
             print("Ejecutar delete")
- 
+    
+    create_replica_log(remoteDB,action,sucursal['nombre'],table)
+
 
 def replica_pull_traslados():
     localDB, remoteDB = get_database_connections_pool()   
