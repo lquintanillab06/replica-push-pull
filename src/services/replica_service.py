@@ -16,7 +16,13 @@ def replica_audit(table, action,audit_table, dispersar=False):
     except Exception as e:
         print(e)
 
-    audits = get_audits(localDB,remoteDB,audit_table,action,table)
+    # sucursal = get_sucursal_local()
+    fecha = datetime.today()
+    sucursalS = get_sucursal_local()
+    print(sucursalS)
+    last_run = get_last_run_replica_log(remoteDB,fecha,table,sucursalS['nombre'],action) 
+
+    audits = get_audits(localDB,remoteDB,audit_table,action,table, last_run)
     for audit in audits:
         print(audit)
         if action == 'PULL':
@@ -48,6 +54,8 @@ def replica_audit(table, action,audit_table, dispersar=False):
             if error:
                 actualizar_audit(remoteDB,audit_table,audit['id'],'Error')
                
+    create_replica_log(remoteDB,action,sucursalS['nombre'],table)
+
 def get_audits(localDB,remoteDB,audit_table,action,table, last_run): 
     audits = []
     if action == 'PUSH':
@@ -79,7 +87,7 @@ def get_audits(localDB,remoteDB,audit_table,action,table, last_run):
 
         try:
             
-            query_audit = f"select * from audit_log where table_name = '{table}' and target = '{sucursal_local['nombre']}' and replicated_cloud is null and date_created >= '2023/02/21' order by date_created"        
+            query_audit = f"select * from audit_log where table_name = '{table}' and target = '{sucursal_local['nombre']}' and replicated_cloud is null and date_created >= '{last_run}' order by date_created"        
             remote_cursor.execute(query_audit)
             audits = remote_cursor.fetchall()
             remote_cnx.close()
