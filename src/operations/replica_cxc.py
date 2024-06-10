@@ -54,7 +54,7 @@ def replica_cxc(tipo_cxc,origenDB,destinoDB,action, remoteDB):
     query_audit =   f"""
                     SELECT a.* 
                     FROM audit_log a join cfdi c on (c.id= a.persisted_object_id) join cuenta_por_cobrar u on (u.cfdi_id = c.id)
-                    where table_name = 'cfdi'  and a.date_replicated is null and u.tipo = '{tipo_cxc}'
+                    where table_name = 'cfdi'  and u.tipo = '{tipo_cxc}'
                     and a.date_created >='{last_run}' 
                     and a.replicated_cloud is null
                     """  
