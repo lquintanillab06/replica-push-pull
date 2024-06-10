@@ -1,7 +1,7 @@
 from datetime import datetime
 from src.database import get_database_connections_pool
 from src.services import (get_entities,get_replica_entity, get_replica_entity_by_field,insert_or_update_entity,crear_audit,actualizar_audit,
-                          get_audits,get_sucursal_local)
+                          get_audits,get_sucursal_local, get_last_run_replica_log, create_replica_log)
 
 
 
@@ -20,15 +20,18 @@ def replica_push_cobranza():
     if sucursal['nombre'] != 'OFICINAS':
         localDB, remoteDB = get_database_connections_pool()   
         action = 'PUSH'
-        replica_cobranza(localDB,remoteDB,action)
+        replica_cobranza(localDB,remoteDB,action,remoteDB)
     else:
         print("No se puede hacer push por estar en oficinas")
 
 
-def replica_cobranza(origenDB,destinoDB, action):
-
+def replica_cobranza(origenDB,destinoDB, action,remoteDB):
+    fecha = datetime.today()
+    table = 'aplicacion_de_cobro'
+    sucursal = get_sucursal_local()
+    last_run = get_last_run_replica_log(remoteDB,fecha,table,sucursal['nombre'],action) 
     print("Obteniendo audits")
-    audits = get_audits(origenDB, destinoDB,'audit_log' ,action,'aplicacion_de_cobro')
+    audits = get_audits(origenDB, destinoDB,'audit_log' ,action,'aplicacion_de_cobro',last_run)
     print("Se obutvieron los audits")
     print()
     for audit in audits:
@@ -74,14 +77,19 @@ def replica_cobranza(origenDB,destinoDB, action):
                             if instruccion:
                                 print(f"Instruccion: {instruccion['id']}")
                                 insert_or_update_entity(destinoDB, 'instruccion_corte', instruccion)
-                insert_or_update_entity(destinoDB,'aplicacion_de_cobro',aplicacion)
+
+            
+
             else:
                 print("No hay aplicacion")   
                 print(audit)
             if action == 'PUSH':
                 target = 'OFICINAS' if audit['target'] == 'CENTRAL' else audit['target']
-                crear_audit(destinoDB,target, audit)
+                crear_audit(destinoDB,target, audit,sucursal['nombre'])
 
+            print(" APLICACION INSERTANDO ")
+            print(f"aplicacion a insertar   {aplicacion}" )
+            insert_or_update_entity(destinoDB,'aplicacion_de_cobro',aplicacion)
             actualizar_audit(origenDB,'audit_log',audit['id'],'Replicado Cloud') 
            
 
@@ -89,6 +97,8 @@ def replica_cobranza(origenDB,destinoDB, action):
             print("+"*50)
         else:               
             print("El event name del audit es DELETE")
+
+    create_replica_log(remoteDB,action,sucursal['nombre'],table)
 
 
 def get_cobro_tipo(connectionDB,cobro):

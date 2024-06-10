@@ -23,5 +23,5 @@ def replica_requisicion_de_material():
         for requisicion in requisiciones:
             print(requisicion)
 
-        #create_replica_log(remoteDB,'PUSH',sucursal['nombre'],'requisicion_de_material')
+    create_replica_log(remoteDB,'PUSH',sucursal['nombre'],'requisicion_de_material')
 

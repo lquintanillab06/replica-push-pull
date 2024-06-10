@@ -26,7 +26,7 @@ def replica_push_cancelacion_cfdi():
                 cxc_cloud = get_replica_entity_by_field(remoteDB,'cuenta_por_cobrar','cfdi_id',cfdi['id'])
                 if cxc_cloud:
                     print("Buscar informacion de la venta para desvincular")
-                    venta_cloud = get_replica_entity(remoteDB,'venta','cuenta_por_cobrar_id',cxc_cloud['id'])
+                    venta_cloud = get_replica_entity(remoteDB,'venta',cxc_cloud['id'])
                     if venta_cloud:
                         query_venta_det = f"Select * from venta_det where venta_id = '{venta_cloud['id']}'"
                         ventas_det = get_entities(remoteDB,query_venta_det)
@@ -51,8 +51,8 @@ def replica_push_cancelacion_cfdi():
                         print("Borrar aplicacion de cobro")
                     print("Actualizar la cuenta por cobrar")
             print("Actualizar cfdi")
-            #insert_or_update_entity(remoteDB,'cfdi',cfdi)
-        #create_replica_log(remoteDB,'PUSH',sucursal['nombre'],'cancelacion_cfdi')
+            insert_or_update_entity(remoteDB,'cfdi',cfdi)
+        create_replica_log(remoteDB,'PUSH',sucursal['nombre'],'cancelacion_cfdi')
 
 
 

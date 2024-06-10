@@ -7,17 +7,37 @@ from src.operations import *
 def start_push():
     print("Arrancando el push job ...")
     scheduler = BackgroundScheduler(job_defaults={'max_instances': 5})
-    # scheduler.add_job(replica_push_cliente, 'cron',day_of_week= 'mon-sat', hour= '9-19',second='*/20', id='push_cliente_id')
-    # scheduler.add_job(replica_push_cliente_credito, 'cron',day_of_week= 'mon-sat', hour= '9-19',second='*/20', id='push_cliente_credito_id')
+    scheduler.add_job(replica_push_cliente, 'cron',day_of_week= 'mon-sat', hour= '9-19',minute='*/5', id='push_cliente_id')
     scheduler.add_job(replica_push_existencia, 'cron',day_of_week= 'mon-sat', hour= '9-19',minute='*/4', id='push_existencia_id')
+
+
+    # scheduler.add_job(replica_push_cliente_credito, 'cron',day_of_week= 'mon-sat', hour= '9-19',second='*/20', id='push_cliente_credito_id')
     # scheduler.add_job(replica_push_producto, 'cron',day_of_week= 'mon-sat', hour= '9-19',minute='*/10', id='push_producto_id')
     # scheduler.add_job(replica_push_proveedor, 'cron',day_of_week= 'mon-sat', hour= '9-19',minute='35', id='push_proveedor_id')
-    # scheduler.add_job(replica_push_fichas, 'cron',day_of_week= 'mon-sat', hour= '9-19',minute='11', id='push_fichas_id')
-    # scheduler.add_job(replica_push_cxc_con,  'cron', day_of_week= 'mon-sat', hour= '9-19',minute='*/10', id='push_cxc_con_id')
-    # scheduler.add_job(replica_push_cxc_cre, 'cron',day_of_week= 'mon-sat', hour= '9-19',minute='11', id='push_cxc_cre_id')
-    # scheduler.add_job(replica_push_cxc_cod, 'cron',day_of_week= 'mon-sat', hour= '9-19',minute='11', id='push_cxc_cod_id')
+    
+    scheduler.add_job(replica_push_fichas, 'cron',day_of_week= 'mon-sat', hour= '9-19',minute='*/25', id='push_fichas_id')
+    scheduler.add_job(replica_push_cxc_con,  'cron', day_of_week= 'mon-sat', hour= '9-19',minute='*/10', id='push_cxc_con_id')
+    scheduler.add_job(replica_push_cxc_cre, 'cron',day_of_week= 'mon-sat', hour= '9-19',minute='*/11', id='push_cxc_cre_id')
+    scheduler.add_job(replica_push_cxc_cod, 'cron',day_of_week= 'mon-sat', hour= '9-19',minute='*/11', id='push_cxc_cod_id')
+    scheduler.add_job(replica_push_cobros,  'cron', day_of_week= 'mon-sat', hour= '9-19',minute='*/5', id='push_cobros_id')
+    scheduler.add_job(replica_push_cobranza,  'cron', day_of_week= 'mon-sat', hour= '9-19',minute='*/10', id='push_cobranza_id')
     scheduler.add_job(replica_push_vales,  'cron', day_of_week= 'mon-sat', hour= '9-19',minute='*/7', id='push_vales_id')
     scheduler.add_job(replica_push_traslados,  'cron', day_of_week= 'mon-sat', hour= '9-19',minute='*/8', id='push_traslado_id')
+    scheduler.add_job(replica_push_cancelacion_cfdi,  'cron', day_of_week= 'mon-sat', hour= '9-19',minute='*/15', id='push_cancelacion_cfdi')
+    scheduler.add_job(replica_push_compras,  'cron', day_of_week= 'mon-sat', hour= '9-19',minute='*/25', id='push_compras')
+    
+    scheduler.add_job(replica_push_embarque,  'cron', day_of_week= 'mon-sat', hour= '9-19',minute='*/12', id='push_embarques')
+    scheduler.add_job(replica_push_envio,  'cron', day_of_week= 'mon-sat', hour= '9-19',minute='*/14', id='push_envio')
+    scheduler.add_job(replica_push_envio_det,  'cron', day_of_week= 'mon-sat', hour= '9-19',minute='*/16', id='push_envio_det')
+
+    
+    scheduler.add_job(replica_push_morrallas,  'cron', day_of_week= 'mon-sat', hour= '20',minute='2', id='push_morralla')
+    scheduler.add_job(replica_movimiento_almacen,  'cron', day_of_week= 'mon-sat', hour= '9-19',minute='*/15', id='push_movimiento_almacen')
+    scheduler.add_job(replica_push_transformaciones,  'cron', day_of_week= 'mon-sat', hour= '9-19',minute='*/15', id='push_movimiento_inventario')
+    scheduler.add_job(replica_push_recepcion_compra,  'cron', day_of_week= 'mon-sat', hour= '9-19',minute='*/2', id='push_recepcion_de_compras')
+    scheduler.add_job(replica_requisicion_de_material,  'cron', day_of_week= 'mon-sat', hour= '20',minute='30', id='push_requisicion_material')
+
+    
     
     # scheduler.add_job(replica_audit_push_inventario,  'cron', day_of_week= 'mon-sat', hour= '9-19',minute='*/3', id='push_inv_id')
 

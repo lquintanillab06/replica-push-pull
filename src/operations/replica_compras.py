@@ -27,12 +27,12 @@ def replica_push_compras():
     for compra in compras:
         print(compra['id'])
         compra_cloud = get_replica_entity(remoteDB,'compra',compra['id'])
- 
+        query_compra_det = f"select * from compra_det where compra_id = '{compra['id']}'"
         if compra_cloud:
             print(f"Compra cloud: {compra_cloud['id']}")
             print(f"Compra last updated: {compra['last_updated']}")
             print(f"Compra Cloud last updated: {compra_cloud['last_updated']}")
-            query_compra_det = f"select * from compra_det where compra_id = '{compra['id']}'"
+            
             if compra['last_updated'] > compra_cloud['last_updated'] :
                 print(compra['last_updated'] > compra_cloud['last_updated'] )
                 print("Ejecutar el PUSH")
@@ -51,7 +51,7 @@ def replica_push_compras():
                 print(compra_det)
             
 
-    #create_replica_log(remoteDB,'PUSH',sucursal['nombre'],'compra')
+    create_replica_log(remoteDB,'PUSH',sucursal['nombre'],'compra')
 
 
 def replica_pull_compras():

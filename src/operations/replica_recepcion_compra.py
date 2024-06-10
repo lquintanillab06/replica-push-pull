@@ -59,7 +59,7 @@ def replica_push_recepcion_compra():
                     print(f"Inventario : {inventario['id']}")
                     insert_or_update_entity(remoteDB, 'inventario', inventario)
 
-    #create_replica_log(remoteDB,'PUSH',sucursal['nombre'],'recepcion_de_compra')
+    create_replica_log(remoteDB,'PUSH',sucursal['nombre'],'recepcion_de_compra')
 
 
 def replica_pull_recepcion_compra():

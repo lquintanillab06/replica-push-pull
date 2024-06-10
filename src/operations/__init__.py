@@ -17,3 +17,5 @@ from .replica_recepcion_compra import *
 from .replica_requisicion_material import *
 from .replica_traslados import *
 from .replica_vales import *
+from .replica_cancelacion_cfdi import *
+from .replica_movimiento_almacen import *

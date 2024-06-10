@@ -5,8 +5,9 @@ from src.database import get_local_pool_connection,get_remote_pool_connection
 
 
 
-def replica_movimiento_almacen(action):
-
+def replica_movimiento_almacen():
+    action = 'PUSH'
+    print("Replica PUSH de Movimiento de almacen ... ",datetime.datetime.now())
     try:
         localDB = get_local_pool_connection()
     except Exception as e:
@@ -86,7 +87,8 @@ def replica_push_movimiento_almacen(localDB, remoteDB, action,table,fecha,sucurs
             insert_or_update_entity(remoteDB,'inventario',inventario)
             insert_or_update_entity(remoteDB,'movimiento_de_almacen_det',partida)
 
-
+    
+    create_replica_log(remoteDB,action,sucursal['nombre'],table)
 
 def get_movimiento(localDB,id):
     query_sol = f"select * from movimiento_de_almacen where id = '{id}' " 

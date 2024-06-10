@@ -57,8 +57,8 @@ def replica_vales(action, remoteDB):
             if replicado:
                 atiende = get_replica_entity(localDB,'sucursal',sol['sucursal_atiende_id'])
                 solicita = get_replica_entity(localDB,'sucursal',sol['sucursal_solicita_id'])
-                crear_audit(remoteDB,'OFICINAS', audit)
-                crear_audit(remoteDB,atiende['nombre'], audit)
+                crear_audit(remoteDB,'OFICINAS', audit,sucursal['nombre'])
+                crear_audit(remoteDB,atiende['nombre'], audit,sucursal['nombre'])
                 # crear_audit(remoteDB,solicita['nombre'], audit)
                 actualizar_audit(localDB,'audit_log',audit['id'],'Replicado')
             if error:

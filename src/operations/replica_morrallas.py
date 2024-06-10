@@ -23,7 +23,8 @@ def replica_push_morrallas():
             insert_or_update_entity(remoteDB,'morralla',morralla)
 
         #if morrallas:
-            #create_replica_log(remoteDB,'PUSH',sucursal['nombre'],'morralla')
+    
+    create_replica_log(remoteDB,'PUSH',sucursal['nombre'],'morralla')
 
 def replica_pull_morrallas():
     sucursal = get_sucursal_local()

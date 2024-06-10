@@ -164,6 +164,7 @@ def get_replica_entity_by_field(conectionDB, table, field, field_id):
         return None
   
 def insert_replica_entity(conectionDB, table, entity):
+    print(f"     INSERTANDO  {table}")
     try:
         cnx = conectionDB.get_conexion()
         cursor = cnx.cursor(dictionary=True, buffered=True)
@@ -187,6 +188,7 @@ def insert_replica_entity(conectionDB, table, entity):
         return False, None
 
 def update_replica_entity(conectionDB, table, entity):  
+    print(" ▀▀▀▀▀▀▀  ACTUALIZANDO   ▀▀▀▀▀▀▀ ")
     try:
         cnx = conectionDB.get_conexion()
         cursor = cnx.cursor(dictionary=True, buffered=True)
@@ -205,6 +207,7 @@ def update_replica_entity(conectionDB, table, entity):
 
 def insert_or_update_entity(conectionDB, table, entity):
     _,error = insert_replica_entity(conectionDB,table,entity)
+    print(error)
     if error == 1062:
         update_replica_entity(conectionDB,table,entity)
     

@@ -45,6 +45,8 @@ def replica_push_fichas():
 
             create_replica_log(remoteDB,'PUSH',sucursal['nombre'],'ficha')
 
+    create_replica_log(remoteDB,'PUSH',sucursal['nombre'],'ficha')
+
 
 def replica_pull_fichas():
     sucursal = get_sucursal_local()

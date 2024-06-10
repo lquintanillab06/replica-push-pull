@@ -19,7 +19,7 @@ def replica_audit(table, action,audit_table, dispersar=False):
     # sucursal = get_sucursal_local()
     fecha = datetime.today()
     sucursalS = get_sucursal_local()
-    print(sucursalS)
+    # print(sucursalS)
     last_run = get_last_run_replica_log(remoteDB,fecha,table,sucursalS['nombre'],action) 
 
     audits = get_audits(localDB,remoteDB,audit_table,action,table, last_run)
@@ -42,18 +42,19 @@ def replica_audit(table, action,audit_table, dispersar=False):
                 if sucursales:
                     for sucursal in sucursales:
                         print("**********************************************")
-                        print(sucursal)
+                        print(sucursal['server'])
                         print("**********************************************")
-                        crear_audit(remoteDB,sucursal['server'], audit)
+                        crear_audit(remoteDB,sucursal['server'], audit,sucursalS['nombre'])
                 else:
                     target = audit['target']
                     if target == 'CENTRAL':
                         target = 'OFICINAS'
-                    crear_audit(remoteDB,target, audit)
+                    crear_audit(remoteDB,target, audit, sucursalS['nombre'])
                 actualizar_audit(localDB,audit_table,audit['id'],'Replicado_cloud')
             if error:
                 actualizar_audit(remoteDB,audit_table,audit['id'],'Error')
-               
+
+
     create_replica_log(remoteDB,action,sucursalS['nombre'],table)
 
 def get_audits(localDB,remoteDB,audit_table,action,table, last_run): 
@@ -137,7 +138,7 @@ def get_sucursal_local():
         return None
 
 
-def crear_audit(connectionDB,sucursal_name, audit_origen):
+def crear_audit(connectionDB,sucursal_name, audit_origen,sucursal_origen):
     try:
         cnx =  connectionDB.get_conexion()
         cursor = cnx.cursor(dictionary=True, buffered=True)
@@ -150,7 +151,7 @@ def crear_audit(connectionDB,sucursal_name, audit_origen):
                     'name':audit_origen['name'],
                     'event_name': audit_origen['event_name'],
                     'table_name': audit_origen['table_name'],
-                    'source': 'CENTRAL',
+                    'source': sucursal_origen,
                 }
         sql_insert_audit = """
                             insert into audit_log 
@@ -281,7 +282,7 @@ def get_last_run_replica_log(remoteDB,fecha,entity,sucursal,action):
     except Exception as e:
         print(e)
     query = f"select max(fecha_control) as last_run from replica_log where date(date_created) = '{fecha.date()}' and entity= '{entity}' and sucursal = '{sucursal}' and action = '{action}'"
-
+    
     remote_cursor.execute(query)
     last_replica_log = remote_cursor.fetchone()
     remote_cnx.close()

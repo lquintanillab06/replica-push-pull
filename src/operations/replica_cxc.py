@@ -56,6 +56,7 @@ def replica_cxc(tipo_cxc,origenDB,destinoDB,action, remoteDB):
                     FROM audit_log a join cfdi c on (c.id= a.persisted_object_id) join cuenta_por_cobrar u on (u.cfdi_id = c.id)
                     where table_name = 'cfdi'  and a.date_replicated is null and u.tipo = '{tipo_cxc}'
                     and a.date_created >='{last_run}' 
+                    and a.replicated_cloud is null
                     """  
     print(query_audit)
     audits = get_entities(origenDB,query_audit)
@@ -90,7 +91,7 @@ def replica_cxc(tipo_cxc,origenDB,destinoDB,action, remoteDB):
 
                             insert_or_update_entity(destinoDB, 'venta_det', venta_det)
             if action == 'PUSH':
-                crear_audit(destinoDB,audit['target'], audit)
+                crear_audit(destinoDB,audit['target'], audit, sucursal['nombre'])
             actualizar_audit(origenDB,'audit_log',audit['id'],'Replicado Cloud')
 
         create_replica_log(remoteDB,action,sucursal['nombre'],table)

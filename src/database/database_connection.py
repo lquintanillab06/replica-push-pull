@@ -97,7 +97,7 @@ class DataBasePoolConnection():
 
             self._cnx = mysql.connector.pooling.MySQLConnectionPool(
                     pool_name = "my_pool",
-                    pool_size = 5,
+                    pool_size = 15,
                     pool_reset_session=True,
                     host = _datasource['host'],
                     user = _datasource['user'],

@@ -33,8 +33,9 @@ def replica_push_movimiento_inventario(localDB, remoteDB, action,table,table_det
                 insert_or_update_entity(remoteDB,'inventario',inventario)
             insert_or_update_entity(remoteDB,table_det,partida)
      
-    if entities:
-        create_replica_log(remoteDB,action,sucursal['nombre'],table)
+    # if entities:
+    
+    create_replica_log(remoteDB,action,sucursal['nombre'],table)
 
 def replica_pull_movimientos(table, table_det):
     localDB, remoteDB = get_database_connections_pool()

@@ -37,9 +37,9 @@ def replica_push_traslados():
             sucursal_traslado = get_replica_entity(localDB,'sucursal',traslado['sucursal_id'])
             print(f"Sucursal: {sucursal_traslado['nombre']}")
             print("Procedemos a crear el auditlog en la nube")
-            crear_audit(remoteDB,'OFICINAS', audit)
+            crear_audit(remoteDB,'OFICINAS', audit,sucursal['nombre'])
             if sucursal['id'] != sucursal_traslado['id']:
-                crear_audit(remoteDB,sucursal_traslado['nombre'], audit)
+                crear_audit(remoteDB,sucursal_traslado['nombre'], audit,sucursal['nombre'])
             actualizar_audit(localDB,'audit_log',audit['id'],'Replicado')
         elif not traslado  and audit['event_name'] == 'DELETE':
             print("Ejecutar delete")
