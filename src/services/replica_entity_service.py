@@ -212,7 +212,22 @@ def insert_or_update_entity(conectionDB, table, entity):
         update_replica_entity(conectionDB,table,entity)
     
 
+def get_replica_entities(conectionDB, table, field, field_id):
 
+    query_entity = f"select * from {table} where {field} = %(id)s "
+    try:
+        cnx = conectionDB.get_conexion()
+        cursor = cnx.cursor(dictionary=True, buffered=True)
+        cursor.execute(query_entity,{'id':field_id})
+        row = cursor.fetchall()
+        cnx.close()
+        return row
+    except Exception as e:
+        print(e)
+        return None
+
+def deleteCobros():
+    print("delete")
 
 
     

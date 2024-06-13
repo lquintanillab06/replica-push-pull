@@ -1,7 +1,7 @@
 from datetime import datetime
 from src.database import get_database_connections_pool
 from src.services import (get_entities,get_replica_entity, get_replica_entity_by_field,insert_or_update_entity,crear_audit,actualizar_audit,
-                          get_audits,get_sucursal_local, get_last_run_replica_log, create_replica_log)
+                          get_audits,get_sucursal_local, get_last_run_replica_log, create_replica_log,delete_entity,get_replica_entities)
 
 
 
@@ -33,7 +33,7 @@ def replica_cobranza(origenDB,destinoDB, action,remoteDB):
     print("Obteniendo audits")
     audits = get_audits(origenDB, destinoDB,'audit_log' ,action,'aplicacion_de_cobro',last_run)
     print("Se obutvieron los audits")
-    print()
+    print(f"El tamaño de los audits es: {len(audits)}")
     for audit in audits:
         print(f"Audit: {audit['persisted_object_id']}")
         if audit['event_name'] == 'INSERT' or audit['event_name'] == 'UPDATE':
@@ -91,13 +91,51 @@ def replica_cobranza(origenDB,destinoDB, action,remoteDB):
             print(f"aplicacion a insertar   {aplicacion}" )
             insert_or_update_entity(destinoDB,'aplicacion_de_cobro',aplicacion)
             actualizar_audit(origenDB,'audit_log',audit['id'],'Replicado Cloud') 
-           
-
-
             print("+"*50)
         else:               
             print("El event name del audit es DELETE")
+            print(audit)
+            aplicacion = get_replica_entity(destinoDB,'aplicacion_de_cobro',audit['persisted_object_id'])
+            print(f"LA APLICACION ES:    {aplicacion}")
+            if aplicacion:
+                print(f"Aplicacion: {aplicacion['id']}")
+                cobro = get_replica_entity(destinoDB,'cobro',aplicacion['cobro_id'])
+                if cobro:
+                    print(f"Forma de pago: {cobro['forma_de_pago']}")
+                    if cobro['forma_de_pago'].startswith('DEPOSITO') or cobro['forma_de_pago'] == 'TRANSFERENCIA':
+                        print(" solo se debe borrar la aplicacion de cobro y actualizar la aplicacion de cobro de ser necesario")
+                        delete_entity(remoteDB,'aplicacion_de_cobro',aplicacion['id'])
+                    elif cobro['forma_de_pago'] == 'EFECTIVO' or cobro['forma_de_pago'] == 'PAGO_DIF':
+                        print(" se debe borrar la aplicacion de cobro y borrar el cobro en especifico sin afectar mas campos")
+                        delete_entity(remoteDB,'aplicacion_de_cobro',aplicacion['id'])
+                        delete_entity(remoteDB,'cobro',cobro['id'])  
+                    elif  cobro['forma_de_pago'].startswith('TARJETA') or cobro['forma_de_pago'] == 'CHEQUE':
+                        print(""" 
+                        se debe borrar la aplicacion de cobro, 
+                        actualizar la primera_aplicacion de cobro de ser necesario 
+                        borrar el cobro en especifico 
+                        y borrar sus detalles del cobro  """)
+                        cobro_tipo,cobro_table = get_cobro_tipo(remoteDB,cobro)
+                        if cobro_tipo:
+                            print(f"Cobro Tipo: {cobro_tipo}")
+                            totalaplicaciones = get_aplicaciones(remoteDB,cobro)
+                            if totalaplicaciones == 1:
+                                delete_entity(remoteDB,cobro_table,cobro_tipo['id'])
+                                delete_entity(remoteDB,'aplicacion_de_cobro',aplicacion['id'])
+                                delete_entity(remoteDB,'cobro',cobro['id'])             
+                            else: 
+                                print("-*-"*60)
+                                print("  SOLO SE BORRARA LA APLICACION  ")
+                                print("-*-"*60)     
+                                delete_entity(remoteDB,'aplicacion_de_cobro',aplicacion['id'])                                          
+                    else:
+                        print("-*-"*60)
+                        print(" APLICACION PARA BORRAR CON FORMA DE PAGO DIFERENTE ")
+                        print("-*-"*60)
+            else:
+                print("NO HAY APLICACION POR BORRAR, PUEDE QUE NUNCA LLEGARA A LA NUBE U OFICINA ")
 
+            actualizar_audit(origenDB,'audit_log',audit['id'],'Replicado Cloud') 
     create_replica_log(remoteDB,action,sucursal['nombre'],table)
 
 
@@ -126,3 +164,12 @@ def get_cobro_tipo(connectionDB,cobro):
         return cobro_tipo,'cobro_tarjeta'
     
     return None, None
+
+def get_aplicaciones(connectionDB,cobro):
+    print(f"Forma de pago : {cobro['forma_de_pago']}")
+    aplicaciones = get_replica_entities(connectionDB,'aplicacion_de_cobro','cobro_id',cobro['id'])
+    # print (aplicaciones)
+    # print("//--"*40)
+    # print (len(aplicaciones))
+    # print("//--"*40)
+    return len(aplicaciones)

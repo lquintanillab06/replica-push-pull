@@ -49,8 +49,9 @@ def replica_cxc(tipo_cxc,origenDB,destinoDB,action, remoteDB):
     print(f"DESTINO: {destinoDB.database}")
     fecha = datetime.datetime.today()
     table = 'cuenta_por_cobrar'
+    nametable = table + tipo_cxc
     sucursal = get_sucursal_local()
-    last_run = get_last_run_replica_log(destinoDB,fecha,table,sucursal['nombre'],action) 
+    last_run = get_last_run_replica_log(destinoDB,fecha,nametable,sucursal['nombre'],action) 
     query_audit =   f"""
                     SELECT a.* 
                     FROM audit_log a join cfdi c on (c.id= a.persisted_object_id) join cuenta_por_cobrar u on (u.cfdi_id = c.id)
@@ -64,7 +65,7 @@ def replica_cxc(tipo_cxc,origenDB,destinoDB,action, remoteDB):
     print(len(audits))
     if (len(audits) == 0):
         print("vacios")
-        create_replica_log(remoteDB,action,sucursal['nombre'],table)
+        create_replica_log(remoteDB,action,sucursal['nombre'],nametable)
     else:
         for audit in audits:
             cfdi = get_replica_entity(origenDB, 'cfdi', audit['persisted_object_id'])
@@ -94,7 +95,7 @@ def replica_cxc(tipo_cxc,origenDB,destinoDB,action, remoteDB):
                 crear_audit(destinoDB,audit['target'], audit, sucursal['nombre'])
             actualizar_audit(origenDB,'audit_log',audit['id'],'Replicado Cloud')
 
-        create_replica_log(remoteDB,action,sucursal['nombre'],table)
+        create_replica_log(remoteDB,action,sucursal['nombre'],nametable)
 
 
    

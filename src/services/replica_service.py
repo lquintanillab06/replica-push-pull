@@ -66,7 +66,8 @@ def get_audits(localDB,remoteDB,audit_table,action,table, last_run):
         except Exception as e:
             print(e)
         try:
-            query_audit = f"select * from {audit_table} where table_name = '{table}' and replicated_cloud is null and date_created >= '{last_run}'  order by date_created"
+            query_audit = f"select * from {audit_table} where table_name = '{table}' and replicated_cloud is null and date_created >= '{last_run}' order by date_created"
+            print(query_audit)
             local_cursor.execute(query_audit)
             audits = local_cursor.fetchall()
             local_cnx.close()
@@ -282,7 +283,7 @@ def get_last_run_replica_log(remoteDB,fecha,entity,sucursal,action):
     except Exception as e:
         print(e)
     query = f"select max(fecha_control) as last_run from replica_log where date(date_created) = '{fecha.date()}' and entity= '{entity}' and sucursal = '{sucursal}' and action = '{action}'"
-    
+    print(query )
     remote_cursor.execute(query)
     last_replica_log = remote_cursor.fetchone()
     remote_cnx.close()
