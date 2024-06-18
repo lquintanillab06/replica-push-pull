@@ -57,9 +57,6 @@ def start_push():
     scheduler.add_job(replica_movimiento_almacen,     'cron', day_of_week= 'mon-sat', hour= '8-21/4', minute='45', id='push_movimiento_almacen_rev',    args=('revision',))
     scheduler.add_job(replica_push_transformaciones,  'cron', day_of_week= 'mon-sat', hour= '8-21/4', minute='48', id='push_movimiento_inventario_rev', args=('revision',))
     scheduler.add_job(replica_push_recepcion_compra,  'cron', day_of_week= 'mon-sat', hour= '8-21/4', minute='50', id='push_recepcion_de_compras_rev',  args=('revision',))
-
-    scheduler.add_job(replica_push_morrallas,           'cron', day_of_week= 'mon-sat', hour= '20', minute='2',  id='push_morralla')
-    scheduler.add_job(replica_requisicion_de_material,  'cron', day_of_week= 'mon-sat', hour= '20', minute='30', id='push_requisicion_material')
     
 
     """    <<<<<<<<    Schedule de revision corren de 1 a 3 veces al dia para revisar de manera general las entidades         >>>>>>>>>>>>>> """
