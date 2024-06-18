@@ -4,7 +4,7 @@ from src.database import get_database_connections_pool
 import datetime
 
 
-def replica_push_traslados():
+def replica_push_traslados(status = 'normal'):
     localDB, remoteDB = get_database_connections_pool()   
     localDB, remoteDB = get_database_connections_pool()
     sucursal = get_sucursal_local()
@@ -13,6 +13,14 @@ def replica_push_traslados():
     table = 'traslado'
     sucursal = get_sucursal_local()
     last_run = get_last_run_replica_log(remoteDB,fecha,table,sucursal['nombre'],action) 
+    if status == "normal":
+        print("lastu run normal ")
+        last_run = get_last_run_replica_log(remoteDB,fecha,table,sucursal['nombre'],action)    
+        messageReplicated = "Replicated cloud"               
+    else: 
+        print(f"EL  last run no es normal  {fecha.date()} ")
+        last_run = fecha.date()    
+        messageReplicated = "Replicated cloud"  
     audits = get_audits(localDB, remoteDB,'audit_log' ,action,'traslado', last_run)
     print(len(audits))
     for audit in audits:
@@ -40,11 +48,14 @@ def replica_push_traslados():
             crear_audit(remoteDB,'OFICINAS', audit,sucursal['nombre'])
             if sucursal['id'] != sucursal_traslado['id']:
                 crear_audit(remoteDB,sucursal_traslado['nombre'], audit,sucursal['nombre'])
-            actualizar_audit(localDB,'audit_log',audit['id'],'Replicado')
+            actualizar_audit(localDB,'audit_log',audit['id'],messageReplicated)
         elif not traslado  and audit['event_name'] == 'DELETE':
             print("Ejecutar delete")
     
-    create_replica_log(remoteDB,action,sucursal['nombre'],table)
+    if status == "normal":
+        create_replica_log(remoteDB,action,sucursal['nombre'],table)
+
+    
 
 
 def replica_pull_traslados():

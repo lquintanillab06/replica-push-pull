@@ -3,7 +3,7 @@ from src.services import (get_sucursal_local,insert_or_update_entity,create_repl
                           get_replica_entity,get_replica_entity_by_field, insert_replica_entity)
 from src.database import get_database_connections_pool
 
-def replica_push_cancelacion_cfdi():
+def replica_push_cancelacion_cfdi(status):
     print("*"*50)
     print("Ejecutando la replica push de cancelacion de  cfdi")
     print("*"*50)
@@ -12,8 +12,13 @@ def replica_push_cancelacion_cfdi():
         localDB, remoteDB = get_database_connections_pool()
         action = 'PUSH'
         fecha = datetime.datetime.today()
-        print(f"Ejecutando el push de cancelacion de cfdi !!!")
-        last_run = get_last_run_replica_log(remoteDB,fecha,'cancelacion_cfdi',sucursal['nombre'],action) 
+        print(f"Ejecutando el push de cancelacion de cfdi !!!")    
+        if status == "normal":
+            print("lastu run normal ")
+            last_run = get_last_run_replica_log(remoteDB,fecha,'cancelacion_cfdi',sucursal['nombre'],action)                             
+        else: 
+            print(f"EL  last run no es normal  {fecha.date()} ")
+            last_run = fecha.date()            
         print(f"Ultima corrida {last_run}")
         query = f"Select * from cfdi where last_updated >= '{last_run}' and status = 'CANCELACION_PENDIENTE'"
         cfdis = get_entities(localDB,query)
@@ -52,7 +57,9 @@ def replica_push_cancelacion_cfdi():
                     print("Actualizar la cuenta por cobrar")
             print("Actualizar cfdi")
             insert_or_update_entity(remoteDB,'cfdi',cfdi)
-        create_replica_log(remoteDB,'PUSH',sucursal['nombre'],'cancelacion_cfdi')
+        if status == "normal":
+            create_replica_log(remoteDB,'PUSH',sucursal['nombre'],'cancelacion_cfdi')
+
 
 
 

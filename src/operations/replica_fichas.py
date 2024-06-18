@@ -5,7 +5,7 @@ from src.database import get_database_connections_pool
 
 
 
-def replica_push_fichas():
+def replica_push_fichas(status = "normal"):
     sucursal = get_sucursal_local()
 
     if sucursal['nombre'] != 'OFICINAS':
@@ -14,11 +14,17 @@ def replica_push_fichas():
         action = 'PUSH'
         fecha = datetime.datetime.today()
         print(f"Ejecutando el push del movimiento !!! fichas")
-        last_run = get_last_run_replica_log(remoteDB,fecha,'ficha',sucursal['nombre'],action) 
+        if status == "normal":
+            print("lastu run normal ")
+            last_run = get_last_run_replica_log(remoteDB,fecha,"ficha",sucursal['nombre'],action)                   
+        else: 
+            print(f"EL  last run no es normal  {fecha.date()} ")
+            last_run = fecha.date()         
         print(f"Ultima corrida {last_run}")
         query = f"select * from ficha where (date_created >= '{last_run}' or last_updated >= '{last_run}' ) and sucursal_id = '{sucursal['id']}'"
         fichas = get_entities(localDB,query)
-
+        print(query)
+        print(fichas)
         for ficha in fichas:
 
             print(ficha['id'])
@@ -45,7 +51,10 @@ def replica_push_fichas():
 
             create_replica_log(remoteDB,'PUSH',sucursal['nombre'],'ficha')
 
-    create_replica_log(remoteDB,'PUSH',sucursal['nombre'],'ficha')
+    if status == "normal":
+        create_replica_log(remoteDB,'PUSH',sucursal['nombre'],'ficha')
+
+    
 
 
 def replica_pull_fichas():

@@ -3,7 +3,7 @@ from src.services import (get_sucursal_local,insert_or_update_entity,create_repl
                           get_replica_entity,get_replica_entity_by_field, insert_replica_entity)
 from src.database import get_database_connections_pool
 
-def replica_push_cobros():
+def replica_push_cobros(status = "normal"):
     print("*"*50)
     print("Ejecutando la replica push de cobros")
     print("*"*50)
@@ -12,7 +12,12 @@ def replica_push_cobros():
     action = 'PUSH'
     fecha = datetime.datetime.today()
     print(f"Ejecutando el push de cobros !!!")
-    last_run = get_last_run_replica_log(remoteDB,fecha,'cobro',sucursal['nombre'],action) 
+    if status == "normal":
+        print("lastu run normal ")
+        last_run = get_last_run_replica_log(remoteDB,fecha,'cobro',sucursal['nombre'],action) 
+    else: 
+        print(f"EL  last run no es normal  {fecha.date()} ")
+        last_run = fecha.date()    
     print(f"Ultima corrida {last_run}")
     query = f"Select * from cobro where last_updated >= '{last_run}'"
     cobros = get_entities(localDB,query)
@@ -32,8 +37,10 @@ def replica_push_cobros():
                     print(f"Solicitud: {solicitud}")
                     insert_or_update_entity(remoteDB,'solicitud_de_deposito',solicitud)
 
+    if status == "normal":
+        create_replica_log(remoteDB,'PUSH',sucursal['nombre'],'cobro')
 
-    create_replica_log(remoteDB,'PUSH',sucursal['nombre'],'cobro')
+
 
 
 def replica_pull_cobros():

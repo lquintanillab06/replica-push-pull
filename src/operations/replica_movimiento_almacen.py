@@ -5,7 +5,7 @@ from src.database import get_local_pool_connection,get_remote_pool_connection
 
 
 
-def replica_movimiento_almacen():
+def replica_movimiento_almacen(status):
     action = 'PUSH'
     print("Replica PUSH de Movimiento de almacen ... ",datetime.datetime.now())
     try:
@@ -13,7 +13,7 @@ def replica_movimiento_almacen():
     except Exception as e:
         print(e)  
     sucursal = get_sucursal_local()
-    replica_movimiento_almacen_sucursal(action,sucursal)
+    replica_movimiento_almacen_sucursal(action,sucursal,status)
 
 
 def replica_sucursal_pull_movimiento_almacen():
@@ -40,7 +40,7 @@ def replica_sucursal_pull_movimiento_almacen():
 
    
 
-def replica_movimiento_almacen_sucursal(action,sucursal):
+def replica_movimiento_almacen_sucursal(action,sucursal,status):
     try:
         localDB = get_local_pool_connection()
     except Exception as e:
@@ -52,7 +52,7 @@ def replica_movimiento_almacen_sucursal(action,sucursal):
     table = 'movimiento_de_almacen'
     fecha = datetime.datetime.today()
     if action == 'PUSH':
-        replica_push_movimiento_almacen(localDB, remoteDB, action,table,fecha,sucursal)
+        replica_push_movimiento_almacen(localDB, remoteDB, action,table,fecha,sucursal,status)
     if action == 'PULL':
         replica_pull_movimiento_almacen(localDB, remoteDB, action,table,fecha,sucursal)
 
@@ -73,9 +73,15 @@ def replica_pull_movimiento_almacen(localDB, remoteDB, action,table,fecha,sucurs
             insert_or_update_entity(localDB,'movimiento_de_almacen_det',partida)
 
 
-def replica_push_movimiento_almacen(localDB, remoteDB, action,table,fecha,sucursal):
+def replica_push_movimiento_almacen(localDB, remoteDB, action,table,fecha,sucursal,status='normal'):
 
     last_run = get_last_run_replica_log(remoteDB,fecha,table,sucursal['nombre'],action) 
+    if status == "normal":
+        print("Last run normal ")
+        last_run = get_last_run_replica_log(remoteDB,fecha,table,sucursal['nombre'],action) 
+    else:
+        print("Lastrun Anormal ")
+        last_run = fecha.date()
     query = f"select * from {table} where (date_created >= '{last_run}' or last_updated >= '{last_run}' ) and sucursal_id = '{sucursal['id']}'"
     entities = get_entities(localDB,query)
     #create_replica_log(remoteDB,action,sucursal['nombre'],table)
@@ -87,8 +93,8 @@ def replica_push_movimiento_almacen(localDB, remoteDB, action,table,fecha,sucurs
             insert_or_update_entity(remoteDB,'inventario',inventario)
             insert_or_update_entity(remoteDB,'movimiento_de_almacen_det',partida)
 
-    
-    create_replica_log(remoteDB,action,sucursal['nombre'],table)
+    if status == 'normal':
+        create_replica_log(remoteDB,action,sucursal['nombre'],table)
 
 def get_movimiento(localDB,id):
     query_sol = f"select * from movimiento_de_almacen where id = '{id}' " 

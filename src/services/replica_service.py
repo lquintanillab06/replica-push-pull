@@ -6,7 +6,7 @@ from src.database import get_local_pool_connection, get_remote_pool_connection
 from  .replica_entity_service import pull_entity,push_entity
 
 
-def replica_audit(table, action,audit_table, dispersar=False):
+def replica_audit(table, action,audit_table, dispersar=False, status = 'normal' ):
     try:
         localDB = get_local_pool_connection()
     except Exception as e:
@@ -20,15 +20,21 @@ def replica_audit(table, action,audit_table, dispersar=False):
     fecha = datetime.today()
     sucursalS = get_sucursal_local()
     # print(sucursalS)
-    last_run = get_last_run_replica_log(remoteDB,fecha,table,sucursalS['nombre'],action) 
-
+    if status == "normal":
+        print("lastu run normal ")
+        last_run = get_last_run_replica_log(remoteDB,fecha,table,sucursalS['nombre'],action)    
+        messageReplicated = "Replicated cloud"               
+    else: 
+        print(f"EL  last run no es normal  {fecha.date()} ")
+        last_run = fecha.date()    
+        messageReplicated = "Replicated cloud"  
     audits = get_audits(localDB,remoteDB,audit_table,action,table, last_run)
     for audit in audits:
         print(audit)
         if action == 'PULL':
             replicado, error = pull_entity(localDB,remoteDB,audit['table_name'],audit['persisted_object_id'],audit['event_name'])
             if replicado:
-                actualizar_audit(remoteDB,audit_table,audit['id'],'Replicado')
+                actualizar_audit(remoteDB,audit_table,audit['id'],messageReplicated)
             if error:
                 actualizar_audit(remoteDB,audit_table,audit['id'],'Error')
         if action == 'PUSH':
@@ -50,12 +56,12 @@ def replica_audit(table, action,audit_table, dispersar=False):
                     if target == 'CENTRAL':
                         target = 'OFICINAS'
                     crear_audit(remoteDB,target, audit, sucursalS['nombre'])
-                actualizar_audit(localDB,audit_table,audit['id'],'Replicado_cloud')
+                actualizar_audit(localDB,audit_table,audit['id'],messageReplicated)
             if error:
                 actualizar_audit(remoteDB,audit_table,audit['id'],'Error')
 
-
-    create_replica_log(remoteDB,action,sucursalS['nombre'],table)
+    if status == "normal":
+        create_replica_log(remoteDB,action,sucursalS['nombre'],table)
 
 def get_audits(localDB,remoteDB,audit_table,action,table, last_run): 
     audits = []

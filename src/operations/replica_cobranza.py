@@ -5,31 +5,38 @@ from src.services import (get_entities,get_replica_entity, get_replica_entity_by
 
 
 
-def replica_pull_cobranza():
+def replica_pull_cobranza(status):
     print ("Ejecutando el pull de cobranza")
     sucursal = get_sucursal_local()
     if sucursal['nombre'] == 'OFICINAS':
         localDB, remoteDB = get_database_connections_pool()   
         action = 'PULL'
-        replica_cobranza(remoteDB,localDB,action)
+        replica_cobranza(remoteDB,localDB,action,status)
     else:
         print("No se puede ejecutar el pull porque no esta en oficinas")
 
-def replica_push_cobranza():
+def replica_push_cobranza(status):
     sucursal = get_sucursal_local()
     if sucursal['nombre'] != 'OFICINAS':
         localDB, remoteDB = get_database_connections_pool()   
         action = 'PUSH'
-        replica_cobranza(localDB,remoteDB,action,remoteDB)
+        replica_cobranza(localDB,remoteDB,action,remoteDB,status)
     else:
         print("No se puede hacer push por estar en oficinas")
 
 
-def replica_cobranza(origenDB,destinoDB, action,remoteDB):
+def replica_cobranza(origenDB,destinoDB, action,remoteDB,status = "normal"):
     fecha = datetime.today()
     table = 'aplicacion_de_cobro'
-    sucursal = get_sucursal_local()
-    last_run = get_last_run_replica_log(remoteDB,fecha,table,sucursal['nombre'],action) 
+    sucursal = get_sucursal_local()    
+    if status == "normal":
+        print("lastu run normal ")
+        last_run = get_last_run_replica_log(remoteDB,fecha,table,sucursal['nombre'],action)    
+        messageReplicated = "Replicated cloud"               
+    else: 
+        print(f"EL  last run no es normal  {fecha.date()} ")
+        last_run = fecha.date()    
+        messageReplicated = "Replicated cloud"               
     print("Obteniendo audits")
     audits = get_audits(origenDB, destinoDB,'audit_log' ,action,'aplicacion_de_cobro',last_run)
     print("Se obutvieron los audits")
@@ -90,7 +97,7 @@ def replica_cobranza(origenDB,destinoDB, action,remoteDB):
             print(" APLICACION INSERTANDO ")
             print(f"aplicacion a insertar   {aplicacion}" )
             insert_or_update_entity(destinoDB,'aplicacion_de_cobro',aplicacion)
-            actualizar_audit(origenDB,'audit_log',audit['id'],'Replicado Cloud') 
+            actualizar_audit(origenDB,'audit_log',audit['id'],messageReplicated) 
             print("+"*50)
         else:               
             print("El event name del audit es DELETE")
@@ -135,8 +142,12 @@ def replica_cobranza(origenDB,destinoDB, action,remoteDB):
             else:
                 print("NO HAY APLICACION POR BORRAR, PUEDE QUE NUNCA LLEGARA A LA NUBE U OFICINA ")
 
-            actualizar_audit(origenDB,'audit_log',audit['id'],'Replicado Cloud') 
-    create_replica_log(remoteDB,action,sucursal['nombre'],table)
+            actualizar_audit(origenDB,'audit_log',audit['id'],messageReplicated) 
+    
+    if status == "normal":
+        create_replica_log(remoteDB,action,sucursal['nombre'],table)
+
+    
 
 
 def get_cobro_tipo(connectionDB,cobro):

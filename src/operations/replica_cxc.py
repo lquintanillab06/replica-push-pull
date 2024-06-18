@@ -4,16 +4,16 @@ from src.services import (get_entities,get_replica_entity, get_replica_entity_by
                           get_last_run_replica_log,get_sucursal_local,create_replica_log)
 
 
-def replica_push_cxc_con():
-    replica_cxc_action('CON','PUSH')
+def replica_push_cxc_con(status):
+    replica_cxc_action('CON','PUSH', status)
 
 
-def replica_push_cxc_cre():
-    replica_cxc_action('CRE','PUSH')
+def replica_push_cxc_cre(status):
+    replica_cxc_action('CRE','PUSH',status)
 
 
-def replica_push_cxc_cod():
-    replica_cxc_action('COD','PUSH')
+def replica_push_cxc_cod(status):
+    replica_cxc_action('COD','PUSH',status)
 
 
 def replica_pull_cxc_con():
@@ -28,7 +28,7 @@ def replica_pull_cxc_cod():
     replica_cxc_action('COD','PULL')
 
 
-def replica_cxc_action(tipo_cxc,action):
+def replica_cxc_action(tipo_cxc,action, status):
     try:
         localDB = get_local_pool_connection()
     except Exception as e:
@@ -38,20 +38,27 @@ def replica_cxc_action(tipo_cxc,action):
     except Exception as e:
         print(e)
     if action == 'PUSH':    
-        replica_cxc(tipo_cxc,localDB,remoteDB, action,remoteDB)
+        replica_cxc(tipo_cxc,localDB,remoteDB, action,remoteDB,status)
     if action == 'PULL':
-        replica_cxc(tipo_cxc,remoteDB,localDB, action,remoteDB)
+        replica_cxc(tipo_cxc,remoteDB,localDB, action,remoteDB,status)
 
 
 
-def replica_cxc(tipo_cxc,origenDB,destinoDB,action, remoteDB):
+def replica_cxc(tipo_cxc,origenDB,destinoDB,action, remoteDB, status="normal"):
     print(f"ORIGEN: {origenDB.database}")
     print(f"DESTINO: {destinoDB.database}")
     fecha = datetime.datetime.today()
     table = 'cuenta_por_cobrar'
     nametable = table + tipo_cxc
     sucursal = get_sucursal_local()
-    last_run = get_last_run_replica_log(destinoDB,fecha,nametable,sucursal['nombre'],action) 
+    if status == "normal":
+        print("lastu run normal ")
+        last_run = get_last_run_replica_log(destinoDB,fecha,nametable,sucursal['nombre'],action)  
+        messageReplicated= 'Replicado Cloud'       
+    else: 
+        print(f"EL  last run no es normal  {fecha.date()} ")
+        last_run = fecha.date()
+        messageReplicated= 'Mensaje Replicado por una validacion global '       
     query_audit =   f"""
                     SELECT a.* 
                     FROM audit_log a join cfdi c on (c.id= a.persisted_object_id) join cuenta_por_cobrar u on (u.cfdi_id = c.id)
@@ -93,9 +100,12 @@ def replica_cxc(tipo_cxc,origenDB,destinoDB,action, remoteDB):
                             insert_or_update_entity(destinoDB, 'venta_det', venta_det)
             if action == 'PUSH':
                 crear_audit(destinoDB,audit['target'], audit, sucursal['nombre'])
-            actualizar_audit(origenDB,'audit_log',audit['id'],'Replicado Cloud')
+            actualizar_audit(origenDB,'audit_log',audit['id'],messageReplicated)
 
-        create_replica_log(remoteDB,action,sucursal['nombre'],nametable)
+        if status == "normal":
+            create_replica_log(remoteDB,action,sucursal['nombre'],nametable)
+
+        
 
 
    

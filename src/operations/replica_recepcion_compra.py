@@ -5,7 +5,7 @@ from src.database import get_database_connections_pool
 
 
 
-def replica_push_recepcion_compra():
+def replica_push_recepcion_compra(status='normal'):
     print("*"*50)
     print("Ejecutando la replica push de recepcion de compras")
     print("*"*50)
@@ -18,7 +18,13 @@ def replica_push_recepcion_compra():
     action = 'PUSH'
     fecha = datetime.datetime.today()
     print(f"Ejecutando el push de recepcion de compras !!!")
-    last_run = get_last_run_replica_log(remoteDB,fecha,'recepcion_de_compra',sucursal['nombre'],action) 
+    if status == "normal":
+        print("Last run normal ")
+        last_run = get_last_run_replica_log(remoteDB,fecha,'recepcion_de_compra',sucursal['nombre'],action) 
+    else:
+        print("Lastrun Anormal ")
+        last_run = fecha.date()
+    
     print(f"Ultima corrida {last_run}")
 
     query = f"Select * from recepcion_de_compra where last_updated >= '{last_run}'"
@@ -59,7 +65,10 @@ def replica_push_recepcion_compra():
                     print(f"Inventario : {inventario['id']}")
                     insert_or_update_entity(remoteDB, 'inventario', inventario)
 
-    create_replica_log(remoteDB,'PUSH',sucursal['nombre'],'recepcion_de_compra')
+    if status == "normal":
+        create_replica_log(remoteDB,'PUSH',sucursal['nombre'],'recepcion_de_compra')
+
+    
 
 
 def replica_pull_recepcion_compra():

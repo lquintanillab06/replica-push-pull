@@ -4,20 +4,25 @@ from src.services import (get_maestro_detalle,get_replica_entity,get_entities,ge
 from src.database import get_database_connections_pool
 
 
-def replica_push_transformaciones():
-    replica_push_movimientos('transformacion', 'transformacion_det')
+def replica_push_transformaciones(status):
+    replica_push_movimientos('transformacion', 'transformacion_det',status)
 
-def replica_push_movimientos(table, table_det):
+def replica_push_movimientos(table, table_det,status):
     localDB, remoteDB = get_database_connections_pool()
     action = 'PUSH'
     fecha = datetime.datetime.today()
     sucursal = get_sucursal_local()
-    replica_push_movimiento_inventario(localDB, remoteDB, action,table,table_det,fecha,sucursal)
+    replica_push_movimiento_inventario(localDB, remoteDB, action,table,table_det,fecha,sucursal,status)
 
 
-def replica_push_movimiento_inventario(localDB, remoteDB, action,table,table_det,fecha,sucursal):
+def replica_push_movimiento_inventario(localDB, remoteDB, action,table,table_det,fecha,sucursal,status='normal'):
     print(f"Ejecutando el push del movimiento !!! {table}")
-    last_run = get_last_run_replica_log(remoteDB,fecha,table,sucursal['nombre'],action) 
+    if status == "normal":
+        print("Last run normal ")
+        last_run = get_last_run_replica_log(remoteDB,fecha,table,sucursal['nombre'],action) 
+    else:
+        print("Lastrun Anormal ")
+        last_run = fecha.date()
     print(f"Ultima corrida {last_run}")
     query = f"select * from {table} where (date_created >= '{last_run}' or last_updated >= '{last_run}' ) and sucursal_id = '{sucursal['id']}'"
     entities = get_entities(localDB,query)
@@ -34,8 +39,8 @@ def replica_push_movimiento_inventario(localDB, remoteDB, action,table,table_det
             insert_or_update_entity(remoteDB,table_det,partida)
      
     # if entities:
-    
-    create_replica_log(remoteDB,action,sucursal['nombre'],table)
+    if status == 'normal':        
+        create_replica_log(remoteDB,action,sucursal['nombre'],table)
 
 def replica_pull_movimientos(table, table_det):
     localDB, remoteDB = get_database_connections_pool()
