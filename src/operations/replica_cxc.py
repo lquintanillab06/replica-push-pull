@@ -4,15 +4,15 @@ from src.services import (get_entities,get_replica_entity, get_replica_entity_by
                           get_last_run_replica_log,get_sucursal_local,create_replica_log)
 
 
-def replica_push_cxc_con(status):
+def replica_push_cxc_con(status='normal'):
     replica_cxc_action('CON','PUSH', status)
 
 
-def replica_push_cxc_cre(status):
+def replica_push_cxc_cre(status='normal'):
     replica_cxc_action('CRE','PUSH',status)
 
 
-def replica_push_cxc_cod(status):
+def replica_push_cxc_cod(status='normal'):
     replica_cxc_action('COD','PUSH',status)
 
 
@@ -44,7 +44,7 @@ def replica_cxc_action(tipo_cxc,action, status):
 
 
 
-def replica_cxc(tipo_cxc,origenDB,destinoDB,action, remoteDB, status="normal"):
+def replica_cxc(tipo_cxc,origenDB,destinoDB,action, remoteDB, status):
     print(f"ORIGEN: {origenDB.database}")
     print(f"DESTINO: {destinoDB.database}")
     fecha = datetime.datetime.today()

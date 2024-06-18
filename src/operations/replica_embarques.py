@@ -11,7 +11,7 @@ def replica_pull_embarque():
     else:
         print("No se puede ejecutar el pull porque no esta en oficinas")
     
-def replica_push_embarque(ValorS):
+def replica_push_embarque(ValorS = 'normal'):
     print("Replica push de Embarque ...",datetime.datetime.now())
     replica_audit('embarque','PUSH','audit_log', status=ValorS)
 
@@ -25,7 +25,7 @@ def replica_pull_envio():
         print("No se puede ejecutar el pull porque no esta en oficinas")
     
 
-def replica_push_envio(valor):
+def replica_push_envio(valor='normal'):
     print("Replica push de Envio ...",datetime.datetime.now())
     replica_audit('envio','PUSH','audit_log', status = valor)
 
@@ -39,6 +39,6 @@ def replica_pull_envio_det():
         print("No se puede ejecutar el pull porque no esta en oficinas")
     
 
-def replica_push_envio_det(valor):
+def replica_push_envio_det(valor='normal'):
     print("Replica push de EnvioDet ...",datetime.datetime.now())
     replica_audit('envio_det','PUSH','audit_log', status = valor)

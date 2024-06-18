@@ -3,7 +3,7 @@ from src.services import (get_sucursal_local,insert_or_update_entity,create_repl
                           get_replica_entity,get_replica_entity_by_field, insert_replica_entity)
 from src.database import get_database_connections_pool
 
-def replica_push_cancelacion_cfdi(status):
+def replica_push_cancelacion_cfdi(status = 'normal'):
     print("*"*50)
     print("Ejecutando la replica push de cancelacion de  cfdi")
     print("*"*50)

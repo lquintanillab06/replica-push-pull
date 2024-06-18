@@ -15,7 +15,7 @@ def replica_pull_cobranza(status):
     else:
         print("No se puede ejecutar el pull porque no esta en oficinas")
 
-def replica_push_cobranza(status):
+def replica_push_cobranza(status='normal'):
     sucursal = get_sucursal_local()
     if sucursal['nombre'] != 'OFICINAS':
         localDB, remoteDB = get_database_connections_pool()   
@@ -25,7 +25,7 @@ def replica_push_cobranza(status):
         print("No se puede hacer push por estar en oficinas")
 
 
-def replica_cobranza(origenDB,destinoDB, action,remoteDB,status = "normal"):
+def replica_cobranza(origenDB,destinoDB, action,remoteDB,status):
     fecha = datetime.today()
     table = 'aplicacion_de_cobro'
     sucursal = get_sucursal_local()    

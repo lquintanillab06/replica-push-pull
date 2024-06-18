@@ -8,11 +8,11 @@ try:
 except Exception as e:
     print(e)
 
-def replica_pull_vales(status):
+def replica_pull_vales(status='normal'):
     print("Replica pull de Vales ...",datetime.datetime.now())
     replica_vales('PULL',status)
 
-def replica_push_vales(status):
+def replica_push_vales(status='normal'):
     print("Replica push de vales ...",datetime.datetime.now())
     try:
         remoteDB = get_remote_pool_connection()
@@ -20,7 +20,7 @@ def replica_push_vales(status):
         print(e)
     replica_vales('PUSH', remoteDB, status)
 
-def replica_vales(action, remoteDB,status = 'normal'):
+def replica_vales(action, remoteDB,status):
     fecha = datetime.datetime.today()
     table = 'solicitud_de_traslado'
     sucursal = get_sucursal_local()

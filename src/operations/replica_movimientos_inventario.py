@@ -4,7 +4,7 @@ from src.services import (get_maestro_detalle,get_replica_entity,get_entities,ge
 from src.database import get_database_connections_pool
 
 
-def replica_push_transformaciones(status):
+def replica_push_transformaciones(status='normal'):
     replica_push_movimientos('transformacion', 'transformacion_det',status)
 
 def replica_push_movimientos(table, table_det,status):
@@ -15,7 +15,7 @@ def replica_push_movimientos(table, table_det,status):
     replica_push_movimiento_inventario(localDB, remoteDB, action,table,table_det,fecha,sucursal,status)
 
 
-def replica_push_movimiento_inventario(localDB, remoteDB, action,table,table_det,fecha,sucursal,status='normal'):
+def replica_push_movimiento_inventario(localDB, remoteDB, action,table,table_det,fecha,sucursal,status):
     print(f"Ejecutando el push del movimiento !!! {table}")
     if status == "normal":
         print("Last run normal ")

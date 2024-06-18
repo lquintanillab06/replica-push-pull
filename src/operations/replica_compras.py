@@ -7,7 +7,7 @@ from src.database import get_database_connections_pool
 
 
 
-def replica_push_compras(status):
+def replica_push_compras(status='normal'):
 
     print("*"*50)
     print("Ejecutando la replica push de compras")

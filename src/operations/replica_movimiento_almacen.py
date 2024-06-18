@@ -5,7 +5,7 @@ from src.database import get_local_pool_connection,get_remote_pool_connection
 
 
 
-def replica_movimiento_almacen(status):
+def replica_movimiento_almacen(status="normal"):
     action = 'PUSH'
     print("Replica PUSH de Movimiento de almacen ... ",datetime.datetime.now())
     try:
@@ -73,7 +73,7 @@ def replica_pull_movimiento_almacen(localDB, remoteDB, action,table,fecha,sucurs
             insert_or_update_entity(localDB,'movimiento_de_almacen_det',partida)
 
 
-def replica_push_movimiento_almacen(localDB, remoteDB, action,table,fecha,sucursal,status='normal'):
+def replica_push_movimiento_almacen(localDB, remoteDB, action,table,fecha,sucursal,status):
 
     last_run = get_last_run_replica_log(remoteDB,fecha,table,sucursal['nombre'],action) 
     if status == "normal":
