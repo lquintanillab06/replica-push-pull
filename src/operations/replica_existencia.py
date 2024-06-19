@@ -6,7 +6,7 @@ def replica_pull_existencia():
     print("Replica pull de Existencia ...",datetime.datetime.now())
     replica_audit('existencia','PULL','audit_log')
 
-def replica_push_existencia():
+def replica_push_existencia(valorS = 'normal'):
     print("Replica push de Existencia ...",datetime.datetime.now())
-    replica_audit('existencia','PUSH','audit_log',True)
+    replica_audit('existencia','PUSH','audit_log',True, status=valorS)
     

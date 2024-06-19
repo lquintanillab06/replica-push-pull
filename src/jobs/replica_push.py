@@ -38,6 +38,7 @@ def start_push():
 
     """    <<<<<<<<    Schedule de revision corren de 1 a 3 veces al dia para revisar de manera general las entidades         >>>>>>>>>>>>>> """
 
+    scheduler.add_job(replica_push_existencia,  'cron', day_of_week= 'mon-sat', hour= '8-21/1', minute='4', id='push_existencia_id_rev', args = ('revision',) )
     scheduler.add_job(replica_push_cxc_con,  'cron', day_of_week= 'mon-sat', hour= '8-21/4', minute='10', id='push_cxc_con_id_rev',  args = ('revision', ))
     scheduler.add_job(replica_push_cxc_cre,  'cron', day_of_week= 'mon-sat', hour= '8-21/4', minute='14', id='push_cxc_cre_id_rev',  args = ('revision', ))
     scheduler.add_job(replica_push_cxc_cod,  'cron', day_of_week= 'mon-sat', hour= '8-21/4', minute='16', id='push_cxc_cod_id_rev',  args = ('revision', ))
@@ -61,6 +62,7 @@ def start_push():
 
     """    <<<<<<<<    Schedule de revision corren de 1 a 3 veces al dia para revisar de manera general las entidades         >>>>>>>>>>>>>> """
 
+    
     
     # scheduler.add_job(replica_audit_push_inventario,  'cron', day_of_week= 'mon-sat', hour= '9-19',minute='*/3', id='push_inv_id')
     # scheduler.add_job(replica_push_cliente_credito, 'cron',day_of_week= 'mon-sat', hour= '9-19',second='*/20', id='push_cliente_credito_id')
