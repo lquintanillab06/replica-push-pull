@@ -6,7 +6,7 @@ from src.operations import *
 
 def start_push():
     print("Arrancando el push job ...")
-    scheduler = BackgroundScheduler(job_defaults={'max_instances': 5})
+    scheduler = BackgroundScheduler(job_defaults={'max_instances': 10})
     # """     **********************   funcionando *********************** """
     scheduler.add_job(replica_push_cliente,     'cron', day_of_week= 'mon-sat', hour= '8-19', minute='*/4', id='push_cliente_id')
     scheduler.add_job(replica_push_existencia,  'cron', day_of_week= 'mon-sat', hour= '8-19', minute='*/4', id='push_existencia_id')
