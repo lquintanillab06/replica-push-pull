@@ -122,8 +122,11 @@ def pull_entity(local,remote,entity_name,entity_id,action):
             if action == 'UPDATE':
                 print(row)
                 print("Realizando el pull-update")
-                update_entity(local.database,local_cursor,entity_name,row)
-                local_cnx.commit()
+                valorVersion = validUpdate(local_cursor,remote_cursor,entity_name,row, 'PULL')
+                if valorVersion:
+                    # print(" <<<<        ACTUALIZANDO    >>> ")
+                    update_entity(local.database,local_cursor,entity_name,row)
+                    local_cnx.commit()                    
             if action == 'DELETE':
                 print("Realizando el pull-delete")
                 #delete_entity(local.database,local_cursor,entity_name,entity_id)
@@ -211,7 +214,6 @@ def insert_or_update_entity(conectionDB, table, entity):
     if error == 1062:
         update_replica_entity(conectionDB,table,entity)
     
-
 def get_replica_entities(conectionDB, table, field, field_id):
 
     query_entity = f"select * from {table} where {field} = %(id)s "
@@ -229,8 +231,35 @@ def get_replica_entities(conectionDB, table, field, field_id):
 def deleteCobros():
     print("delete")
 
+def validUpdate(local_cursor,remote_cursor,table,entity_id,action):
+    """ verificar si las versiones de los distintos 
+    registros sean diferentes para actualizarse y de lo contrario no actualizar """
+    # print(table)
+    # print(entity_id)
+ 
 
+    query_entity = f"select id,version from {table} where id = %(id)s "
+
+    local_cursor.execute(query_entity,{'id':entity_id['id']})
+    rowL = local_cursor.fetchone()
+
+    remote_cursor.execute(query_entity,{'id':entity_id['id']})
+    rowR = remote_cursor.fetchone()
     
+    print(f"LA INFORMACION DE LA SUCURSAL ES:   {rowL}")
+    print(f"LA INFORMACION DE LA NUBE ES:   {rowR}")
 
-    
-
+    if rowL['version'] == rowR['version']:
+        print('LAS VERSIONES SON IGUALES ')
+        print("no hay nada que actualizar")
+        return False
+    elif rowR['version'] > rowL['version'] and action == 'PULL':
+        print("La nube tiene una version mas reciente debe actualizarse ")
+        return True
+    elif rowL['version'] > rowR['version'] and action == 'PUSH':
+        print("La SUCURSAL tiene una version mas reciente debe actualizarse EN LA NUBE ")
+        return True
+    else:
+        print("NO CUMPLE CON LAS REGLAS NO ACTUALIZARA NADA")
+        return False
+    # return rowR

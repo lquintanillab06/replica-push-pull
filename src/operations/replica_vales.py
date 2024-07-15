@@ -10,7 +10,7 @@ except Exception as e:
 
 def replica_pull_vales(status='normal'):
     print("Replica pull de Vales ...",datetime.datetime.now())
-    replica_vales('PULL',status)
+    replica_vales('PULL',remoteDB,status)
 
 def replica_push_vales(status='normal'):
     print("Replica push de vales ...",datetime.datetime.now())

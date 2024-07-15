@@ -2,9 +2,9 @@ import datetime
 from src.services import replica_audit
 
 
-def replica_pull_cliente_credito():
+def replica_pull_cliente_credito(valors = 'normal'):
     print("Replica pull de Cliente Credito ... ",datetime.datetime.now())
-    replica_audit('cliente_credito','PULL','audit_log')
+    replica_audit('cliente_credito','PULL','audit_log', status='normal' )
 
 def replica_push_cliente_credito():
     print("Replica push de Cliente Credito ... ",datetime.datetime.now())

@@ -63,7 +63,7 @@ def replica_push_compras(status='normal'):
 
 
 
-def replica_pull_compras():
+def replica_pull_compras(status='normal'):
     print("*"*50)
     print("Ejecutando la replica pull de compras")
     print("*"*50)
@@ -72,7 +72,12 @@ def replica_pull_compras():
     action = 'PULL'
     fecha = datetime.datetime.today()
     print(f"Ejecutando el PULL de compras !!!")
-    last_run = get_last_run_replica_log(remoteDB,fecha,'compra',sucursal['nombre'],action) 
+    if status == "normal":
+            print("lastu run normal ")
+            last_run = get_last_run_replica_log(remoteDB,fecha,'compra',sucursal['nombre'],action)                             
+    else: 
+        print(f"EL  last run no es normal  {fecha.date()} ")
+        last_run = fecha.date()  
     print(f"Ultima corrida {last_run}")
 
 
@@ -102,4 +107,5 @@ def replica_pull_compras():
             print(f"Compra cloud: {compra_local}")
             print("La compra no existe ejecutar el PULL")
 
-    #create_replica_log(remoteDB,'PULL',sucursal['nombre'],'compra')
+    if status == "normal":
+        create_replica_log(remoteDB,'PUSH',sucursal['nombre'],'compra')
