@@ -28,9 +28,9 @@ datetime.time(18,59)
 
 def start_push():
     print("Arrancando el push job ...")
-    scheduler = BackgroundScheduler(job_defaults={'max_instances': 5})
+    scheduler = BackgroundScheduler(job_defaults={'max_instances': 6})
     # """     **********************   funcionando *********************** """
-    scheduler.add_job(replica_push_cliente,     'cron', day_of_week= 'mon-sat', hour= '8-19', minute='*/4', id='push_cliente_id')
+    # scheduler.add_job(replica_push_cliente,     'cron', day_of_week= 'mon-sat', hour= '8-19', minute='*/4', id='push_cliente_id')
     scheduler.add_job(replica_push_existencia,  'cron', day_of_week= 'mon-sat', hour= '8-19', minute='*/4', id='push_existencia_id')
     
     # scheduler.add_job(replica_push_fichas,    'cron', day_of_week= 'mon-sat', hour= '9-19', minute='*/25', id='push_fichas_id')

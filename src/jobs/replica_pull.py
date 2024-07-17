@@ -59,9 +59,9 @@ datetime.time(18,59)
 def start_pull():
     print("Arrancando el pull job ...")
     # scheduler = BackgroundScheduler(executors={'default':ThreadPoolExecutor(10)})
-    scheduler = BackgroundScheduler(job_defaults={'max_instances': 8 })
-    scheduler.add_job(replica_pull_cliente,         'cron',day_of_week= 'mon-sat', hour= '9-19',minute='*/2', id='pull_cliente_id')
-    scheduler.add_job(replica_pull_cliente_credito, 'cron',day_of_week= 'mon-sat', hour= '8-19',minute='*/4', id='pull_client_credito_id')
+    scheduler = BackgroundScheduler(job_defaults={'max_instances': 6 })
+    # scheduler.add_job(replica_pull_cliente,         'cron',day_of_week= 'mon-sat', hour= '9-19',minute='*/2', id='pull_cliente_id')
+    # scheduler.add_job(replica_pull_cliente_credito, 'cron',day_of_week= 'mon-sat', hour= '8-19',minute='*/4', id='pull_client_credito_id')
     scheduler.add_job(replica_pull_existencia,      'cron',day_of_week= 'mon-sat', hour= '8-19',minute='*/5', id='pull_existencia_id')
     scheduler.add_job(replica_pull_vales,           'cron',day_of_week= 'mon-sat', hour= '8-19',minute='*/5', id='pull_vales_id')
     scheduler.add_job(replica_pull_traslados,       'cron',day_of_week= 'mon-sat', hour= '8-19', minute='*/8',  id='pull_traslado_id')
@@ -71,8 +71,8 @@ def start_pull():
     
 
     """     <<<<<  JOBS DE REVISION  >>>>>     """
-    scheduler.add_job(replica_pull_cliente, 'cron',day_of_week= 'mon-sat', hour= '8-19/1',minute='30', id='pull_cliente_id_rev', args = ('revision',))
-    scheduler.add_job(replica_pull_cliente_credito, 'cron',day_of_week= 'mon-sat', hour= '8-19',minute='*/30', id='pull_client_credito_id_rev', args = ('revision',))
+    # scheduler.add_job(replica_pull_cliente, 'cron',day_of_week= 'mon-sat', hour= '8-19/1',minute='30', id='pull_cliente_id_rev', args = ('revision',))
+    # scheduler.add_job(replica_pull_cliente_credito, 'cron',day_of_week= 'mon-sat', hour= '8-19',minute='*/30', id='pull_client_credito_id_rev', args = ('revision',))
     scheduler.add_job(replica_pull_existencia, 'cron',day_of_week= 'mon-sat', hour= '8-19',minute='*/30', id='pull_existencia_id_rev', args = ('revision',))
     scheduler.add_job(replica_pull_vales, 'cron',day_of_week= 'mon-sat', hour= '8-19',minute='*/30', id='pull_vales_id_rev', args = ('revision',))
     scheduler.add_job(replica_pull_traslados, 'cron',day_of_week= 'mon-sat', hour= '8-19',minute='*/30', id='pull_traslado_id_rev', args = ('revision',))
