@@ -59,15 +59,15 @@ datetime.time(18,59)
 def start_pull():
     print("Arrancando el pull job ...")
     # scheduler = BackgroundScheduler(executors={'default':ThreadPoolExecutor(10)})
-    scheduler = BackgroundScheduler(job_defaults={'max_instances': 12 })
+    scheduler = BackgroundScheduler(job_defaults={'max_instances': 8 })
     scheduler.add_job(replica_pull_cliente,         'cron',day_of_week= 'mon-sat', hour= '9-19',minute='*/2', id='pull_cliente_id')
     scheduler.add_job(replica_pull_cliente_credito, 'cron',day_of_week= 'mon-sat', hour= '8-19',minute='*/4', id='pull_client_credito_id')
     scheduler.add_job(replica_pull_existencia,      'cron',day_of_week= 'mon-sat', hour= '8-19',minute='*/5', id='pull_existencia_id')
     scheduler.add_job(replica_pull_vales,           'cron',day_of_week= 'mon-sat', hour= '8-19',minute='*/5', id='pull_vales_id')
     scheduler.add_job(replica_pull_traslados,       'cron',day_of_week= 'mon-sat', hour= '8-19', minute='*/8',  id='pull_traslado_id')
-    scheduler.add_job(replica_pull_producto,        'cron',day_of_week= 'mon-sat', hour= '8-19',minute='*/10', id='pull_producto_id')
-    scheduler.add_job(replica_pull_proveedor,       'cron',day_of_week= 'mon-sat', hour= '9-19',minute='30', id='pull_proveedor_id')
-    scheduler.add_job(replica_pull_compras,         'cron',day_of_week= 'mon-sat', hour= '8-19',minute='*/15', id='pull_compras_id')
+    # scheduler.add_job(replica_pull_producto,        'cron',day_of_week= 'mon-sat', hour= '8-19',minute='*/10', id='pull_producto_id')
+    # scheduler.add_job(replica_pull_proveedor,       'cron',day_of_week= 'mon-sat', hour= '9-19',minute='30', id='pull_proveedor_id')
+    # scheduler.add_job(replica_pull_compras,         'cron',day_of_week= 'mon-sat', hour= '8-19',minute='*/15', id='pull_compras_id')
     
 
     """     <<<<<  JOBS DE REVISION  >>>>>     """
@@ -77,9 +77,9 @@ def start_pull():
     scheduler.add_job(replica_pull_vales, 'cron',day_of_week= 'mon-sat', hour= '8-19',minute='*/30', id='pull_vales_id_rev', args = ('revision',))
     scheduler.add_job(replica_pull_traslados, 'cron',day_of_week= 'mon-sat', hour= '8-19',minute='*/30', id='pull_traslado_id_rev', args = ('revision',))
     
-    scheduler.add_job(replica_pull_producto, 'cron',day_of_week= 'mon-sat', hour= '8-19',minute='*/30', id='pull_producto_id_rev', args = ('revision',))
-    scheduler.add_job(replica_pull_proveedor, 'cron',day_of_week= 'mon-sat', hour= '8-19',minute='*/30', id='pull_proveedor_id_rev', args = ('revision',))
-    scheduler.add_job(replica_pull_compras, 'cron',day_of_week= 'mon-sat', hour= '8-19',minute='*/30', id='pull_compras_id_rev', args = ('revision',))
+    # scheduler.add_job(replica_pull_producto, 'cron',day_of_week= 'mon-sat', hour= '8-19',minute='*/30', id='pull_producto_id_rev', args = ('revision',))
+    # scheduler.add_job(replica_pull_proveedor, 'cron',day_of_week= 'mon-sat', hour= '8-19',minute='*/30', id='pull_proveedor_id_rev', args = ('revision',))
+    # scheduler.add_job(replica_pull_compras, 'cron',day_of_week= 'mon-sat', hour= '8-19',minute='*/30', id='pull_compras_id_rev', args = ('revision',))
     
     # scheduler.add_job(testprint, 'cron', second='*/5', id='idprint')
 
@@ -121,7 +121,7 @@ def start_pull():
                 scheduler.resume_job('pull_proveedor_id_rev')
                 scheduler.resume_job('pull_compras_id_rev')
 
-    scheduler.add_listener(forlistpull, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
+    # scheduler.add_listener(forlistpull, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
 
     scheduler.start() 
 
