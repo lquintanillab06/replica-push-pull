@@ -96,9 +96,10 @@ def replica_cobranza(origenDB,destinoDB, action,remoteDB,status):
 
             print(" APLICACION INSERTANDO ")
             print(f"aplicacion a insertar   {aplicacion}" )
-            insert_or_update_entity(destinoDB,'aplicacion_de_cobro',aplicacion)
-            actualizar_audit(origenDB,'audit_log',audit['id'],messageReplicated) 
+            #insert_or_update_entity(destinoDB,'aplicacion_de_cobro',aplicacion)
+            #actualizar_audit(origenDB,'audit_log',audit['id'],messageReplicated) 
             print("+"*50)
+
         else:               
             print("El event name del audit es DELETE")
             print(audit)

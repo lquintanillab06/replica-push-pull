@@ -70,8 +70,10 @@ def push_entity(local,remote,entity_name,entity_id,action):
                 remote_cnx.commit()
             if action == 'UPDATE':
                 print("Realizando el push-update")
-                update_entity(remote.database,remote_cursor,entity_name,row)
-                remote_cnx.commit()
+                valorVersion = validUpdate(local_cursor,remote_cursor,entity_name,row, 'PUSH')
+                if valorVersion:
+                    update_entity(remote.database,remote_cursor,entity_name,row)
+                    remote_cnx.commit()
             if action == 'DELETE':
                 print("Realizando el push-delete")
                 delete_entity(remote.database,remote_cursor,entity_name,entity_id)

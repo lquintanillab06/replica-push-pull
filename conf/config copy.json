@@ -1,11 +1,23 @@
 {
-    "local_datasource": {
+    "local_datasource2": {
         "host": "10.10.1.101",
         "user": "root",
         "passwd": "sys",
         "database": "siipapx"
     },
+    "remote_datasource2": {
+        "host": "157.245.248.200",
+        "user": "sistemas3",
+        "passwd": "papasr98",
+        "database": "replica"
+    },
     "remote_datasource": {
+        "host": "10.10.1.121",
+        "user": "sistemas3",
+        "passwd": "mrsa14_98",
+        "database": "pruebas121"
+    },
+    "local_datasource": {
         "host": "157.245.248.200",
         "user": "sistemas3",
         "passwd": "papasr98",

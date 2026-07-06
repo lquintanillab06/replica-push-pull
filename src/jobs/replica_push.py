@@ -8,6 +8,7 @@ todos inician a las 8 am y terminan a las 7 pm,
 ¿cuantas veces se repetirian al mismo tiempo al menos 10 sistemas?"""
 
 
+
 listdates = [ 
 datetime.time(8,19), datetime.time(8,29), datetime.time(8,39),
 datetime.time(8,59), datetime.time(9,9), datetime.time(9,11), datetime.time(9,19), datetime.time(9,29), datetime.time(9,39),
@@ -28,19 +29,19 @@ datetime.time(18,59)
 
 def start_push():
     print("Arrancando el push job ...")
-    scheduler = BackgroundScheduler(job_defaults={'max_instances': 6})
+    scheduler = BackgroundScheduler(job_defaults={'max_instances': 1})
     # """     **********************   funcionando *********************** """
     # scheduler.add_job(replica_push_cliente,     'cron', day_of_week= 'mon-sat', hour= '8-19', minute='*/4', id='push_cliente_id')
-    scheduler.add_job(replica_push_existencia,  'cron', day_of_week= 'mon-sat', hour= '8-19', minute='*/4', id='push_existencia_id')
+    # scheduler.add_job(replica_push_existencia,  'cron', day_of_week= 'mon-sat', hour= '8-19', minute='*/2', id='push_existencia_id')
     
     # scheduler.add_job(replica_push_fichas,    'cron', day_of_week= 'mon-sat', hour= '9-19', minute='*/25', id='push_fichas_id')
-    # scheduler.add_job(replica_push_cxc_con,   'cron', day_of_week= 'mon-sat', hour= '8-19', minute='*/7',  id='push_cxc_con_id')
+    # scheduler.add_job(replica_push_cxc_con,   'cron', day_of_week= 'mon-sat', hour= '8-19', minute='*/2',  id='push_cxc_con_id')
     # scheduler.add_job(replica_push_cxc_cre,   'cron', day_of_week= 'mon-sat', hour= '8-19', minute='*/10', id='push_cxc_cre_id')
     # scheduler.add_job(replica_push_cxc_cod,   'cron', day_of_week= 'mon-sat', hour= '8-19', minute='*/12', id='push_cxc_cod_id')
     # scheduler.add_job(replica_push_cobros,    'cron', day_of_week= 'mon-sat', hour= '8-19', minute='*/5',  id='push_cobros_id')
-    # scheduler.add_job(replica_push_cobranza,  'cron', day_of_week= 'mon-sat', hour= '8-19', minute='*/9',  id='push_cobranza_id')
-    scheduler.add_job(replica_push_vales,     'cron', day_of_week= 'mon-sat', hour= '8-19', minute='*/7',  id='push_vales_id')
-    scheduler.add_job(replica_push_traslados, 'cron', day_of_week= 'mon-sat', hour= '8-19', minute='*/8',  id='push_traslado_id')
+    scheduler.add_job(replica_push_cobranza,  'cron', day_of_week= 'mon-sat', hour= '8-19', minute='*/2',  id='push_cobranza_id')
+    # scheduler.add_job(replica_push_vales,     'cron', day_of_week= 'mon-sat', hour= '8-19', minute='*/1',  id='push_vales_id')
+    # scheduler.add_job(replica_push_traslados, 'cron', day_of_week= 'mon-sat', hour= '8-19', minute='*/8',  id='push_traslado_id')
     # scheduler.add_job(replica_push_cancelacion_cfdi,  'cron', day_of_week= 'mon-sat', hour= '8-19', minute='*/15', id='push_cancelacion_cfdi')
     # scheduler.add_job(replica_push_compras,           'cron', day_of_week= 'mon-sat', hour= '9-19', minute='*/25', id='push_compras')
     
@@ -60,15 +61,15 @@ def start_push():
 
     """    <<<<<<<<    Schedule de revision corren de 1 a 3 veces al dia para revisar de manera general las entidades         >>>>>>>>>>>>>> """
 
-    scheduler.add_job(replica_push_existencia,  'cron', day_of_week= 'mon-sat', hour= '8-21/1', minute='4', id='push_existencia_id_rev', args = ('revision',) )
+    # scheduler.add_job(replica_push_existencia,  'cron', day_of_week= 'mon-sat', hour= '8-21/1', minute='4', id='push_existencia_id_rev', args = ('revision',) )
     # scheduler.add_job(replica_push_cxc_con,  'cron', day_of_week= 'mon-sat', hour= '8-21/4', minute='10', id='push_cxc_con_id_rev',  args = ('revision', ))
     # scheduler.add_job(replica_push_cxc_cre,  'cron', day_of_week= 'mon-sat', hour= '8-21/4', minute='14', id='push_cxc_cre_id_rev',  args = ('revision', ))
     # scheduler.add_job(replica_push_cxc_cod,  'cron', day_of_week= 'mon-sat', hour= '8-21/4', minute='16', id='push_cxc_cod_id_rev',  args = ('revision', ))
     # scheduler.add_job(replica_push_fichas,   'cron', day_of_week= 'mon-sat', hour= '8-21/3', minute='20', id='push_fichas_id_rev',   args = ('revision',))
     # scheduler.add_job(replica_push_cobros,   'cron', day_of_week= 'mon-sat', hour= '8-21/2', minute='30', id='push_cobros_id_rev',   args = ('revision',))
     # scheduler.add_job(replica_push_cobranza, 'cron', day_of_week= 'mon-sat', hour= '8-21/2', minute='40', id='push_cobranza_id_rev', args = ('revision', ))
-    scheduler.add_job(replica_push_vales,    'cron', day_of_week= 'mon-sat', hour= '8-21/3', minute='30', id='push_vales_id_rev',    args = ('revision',))
-    scheduler.add_job(replica_push_traslados,         'cron', day_of_week= 'mon-sat', hour= '8-21/3', minute='40', id='push_traslado_id_rev',      args = ('revision',))
+    # scheduler.add_job(replica_push_vales,    'cron', day_of_week= 'mon-sat', hour= '8-21/3', minute='30', id='push_vales_id_rev',    args = ('revision',))
+    # scheduler.add_job(replica_push_traslados,         'cron', day_of_week= 'mon-sat', hour= '8-21/3', minute='40', id='push_traslado_id_rev',      args = ('revision',))
     # scheduler.add_job(replica_push_cancelacion_cfdi,  'cron', day_of_week= 'mon-sat', hour= '8-21/4', minute='30', id='push_cancelacion_cfdi_rev', args = ('revision',))
     # scheduler.add_job(replica_push_compras,           'cron', day_of_week= 'mon-sat', hour= '8-21/4', minute='40', id='push_compras_rev',          args = ('revision',))
 

@@ -52,6 +52,19 @@ def replica_audit(table, action,audit_table, dispersar=False, status = 'normal' 
                         print("**********************************************")
                         crear_audit(remoteDB,sucursal['server'], audit,sucursalS['nombre'])
                 else:
+                    if not dispersar:
+                        # Insert an unmodified copy of the audit read from local audit_log.
+                        crear_audit_operacion(remoteDB, {
+                            'version': audit['version'],
+                            'persisted_object_id': audit['persisted_object_id'],
+                            'target': audit['target'],
+                            'date_created': audit['date_created'],
+                            'last_updated': audit['last_updated'],
+                            'name': audit['name'],
+                            'event_name': audit['event_name'],
+                            'table_name': audit['table_name'],
+                            'source': audit['source'],
+                        })
                     target = audit['target']
                     if target == 'CENTRAL':
                         target = 'OFICINAS'
@@ -72,7 +85,7 @@ def get_audits(localDB,remoteDB,audit_table,action,table, last_run):
         except Exception as e:
             print(e)
         try:
-            query_audit = f"select * from {audit_table} where table_name = '{table}' and replicated_cloud is null and date_created >= '{last_run}' order by date_created"
+            query_audit = f"select * from {audit_table} where table_name = '{table}' and replicated_cloud is null and date_created >= '{last_run}' order by date_created"            
             print(query_audit)
             local_cursor.execute(query_audit)
             audits = local_cursor.fetchall()
@@ -96,6 +109,7 @@ def get_audits(localDB,remoteDB,audit_table,action,table, last_run):
         try:
             
             query_audit = f"select * from audit_log where table_name = '{table}' and target = '{sucursal_local['nombre']}' and replicated_cloud is null and date_created >= '{last_run}' order by date_created"        
+            print(query_audit)
             remote_cursor.execute(query_audit)
             audits = remote_cursor.fetchall()
             remote_cnx.close()

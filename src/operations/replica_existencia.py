@@ -8,5 +8,5 @@ def replica_pull_existencia(valors='normal'):
 
 def replica_push_existencia(valorS = 'normal'):
     print("Replica push de Existencia ...",datetime.datetime.now())
-    replica_audit('existencia','PUSH','audit_log',True, status=valorS)
+    replica_audit('existencia','PUSH','audit_log',False, status=valorS)
     
